@@ -7,7 +7,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc"
+    "build": "rimraf dist && tsc",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "qs": "^6.11.0",

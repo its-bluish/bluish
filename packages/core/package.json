@@ -7,7 +7,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc"
+    "build": "rimraf dist && tsc",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@azure/functions": "^3.2.0"
