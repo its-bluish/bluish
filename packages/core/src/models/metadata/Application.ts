@@ -42,9 +42,6 @@ export class ApplicationMetadata {
     return globalThis.bluishApplicationMetadata
   }
 
-  /** TODO: Maybe switch place of decorator */
-  public classFilePath = getDecoratedFilePath(ApplicationMetadata)
-
   public hooks = new HookCollection()
 
   public plugins = new PluginCollection()
