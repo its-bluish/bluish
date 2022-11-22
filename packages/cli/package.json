@@ -1,0 +1,32 @@
+{
+  "name": "@bluish/cli",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": {
+    "bluish": "./dist/bin/index.js",
+    "bluish-create-app": "./dist/bin/bluish-create-app.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "@cookiex/emitter": "^1.0.5",
+    "chokidar": "^3.5.3",
+    "cli-progress": "^3.11.2",
+    "commander": "^9.4.1",
+    "glob": "^8.0.3",
+    "ts-node": "^10.9.1",
+    "unzipper": "^0.10.11"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.0",
+    "@types/glob": "^8.0.0",
+    "@types/node": "^18.8.3",
+    "@types/unzipper": "^0.10.5"
+  },
+  "peerDependencies": {
+    "@bluish/core": "0.0.0"
+  }
+}

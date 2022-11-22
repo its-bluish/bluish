@@ -1,0 +1,20 @@
+{
+  "name": "@bluish/plugin-urlencoded",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "qs": "^6.11.0",
+    "type-is": "^1.6.18"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.9.7",
+    "@types/type-is": "^1.6.3"
+  },
+  "peerDependencies": {
+    "@bluish/core": "0.0.0"
+  }
+}
