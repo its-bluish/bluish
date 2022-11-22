@@ -3,7 +3,7 @@ import { Metadata } from "../models/metadata";
 import { Arg, ArgFactory } from "../models/metadata/Arg";
 import { wait } from "../tools/wait";
 
-export function Bind<C extends Context>(factory: ArgFactory<C>) {
+export function Bind<C extends Context>(factory: ArgFactory<C> = context => context) {
   return (target: Object, property: string, index: number) => {
     wait.any(target, property)
       .then(metadata => {
