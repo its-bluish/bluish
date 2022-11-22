@@ -1,7 +1,6 @@
 {
   "name": "@bluish/cli",
   "version": "0.0.0",
-  "main": "index.js",
   "license": "MIT",
   "bin": {
     "bluish": "./dist/bin/index.js",
