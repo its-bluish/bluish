@@ -1,12 +1,14 @@
 {
   "name": "@bluish/cli",
-  "version": "0.0.0",
+  "version": "0.0.1-alpha.0",
   "license": "MIT",
   "bin": {
     "bluish": "./dist/bin/index.js",
     "bluish-create-app": "./dist/bin/bluish-create-app.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rimraf dist && tsc"
   },
