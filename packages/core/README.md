@@ -23,7 +23,7 @@ yarn add @bluish/core
 yarn add -D @bluish/cli
 ```
 
-## Use
+## Usage
 
 ### Configuration file
 
