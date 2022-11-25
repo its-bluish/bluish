@@ -1,25 +1,26 @@
-import { Context, AzureFunctionContext } from "./Context";
+import { Context, AzureFunctionContext } from './Context'
 import { HttpRequest } from '@azure/functions'
-import { PromiseToo } from "../../typings/PromiseToo";
+import { PromiseToo } from '../../typings/PromiseToo'
 
-export { HttpRequest as AzureHttpRequest } from '@azure/functions'
+export type { HttpRequest as AzureHttpRequest } from '@azure/functions'
 
-export type HttpMethod = Lowercase<'GET' | 'POST' | 'DELETE' | 'HEAD' | 'PATCH' | 'PUT' | 'OPTIONS' | 'TRACE' | 'CONNECT'>
+export type HttpMethod = Lowercase<
+  'GET' | 'POST' | 'DELETE' | 'HEAD' | 'PATCH' | 'PUT' | 'OPTIONS' | 'TRACE' | 'CONNECT'
+>
 
 export interface HttpTemplate {
   query: Record<string, unknown>
   params: Record<string, unknown>
-  body: any
+  body: unknown
 }
-
 export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
   public method: HttpMethod
   public url: string
   public headers: Record<string, string>
   public query: HttpTemplate['query'] & T['query']
   public params: HttpTemplate['params'] & T['params']
-  public body: HttpTemplate['body'] & T['query']
-  public rawBody: any
+  public body: T['body']
+  public rawBody: unknown
 
   constructor(context: AzureFunctionContext, public azureFunctionRequest: HttpRequest) {
     super(context)
@@ -27,15 +28,14 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
     this.method = azureFunctionRequest.method?.toLowerCase() as HttpMethod
     this.url = azureFunctionRequest.url
     this.headers = Object.fromEntries(
-      Object.entries(azureFunctionRequest.headers ?? {})
-        .flatMap(([key, value]) => [
-          [key, value],
-          [key.toLowerCase(), value]
-        ])
+      Object.entries(azureFunctionRequest.headers).flatMap(([key, value]) => [
+        [key, value],
+        [key.toLowerCase(), value],
+      ]),
     )
-    this.query = azureFunctionRequest.query ?? {}
-    this.params = azureFunctionRequest.params ?? {}
-    this.body = azureFunctionRequest.body
+    this.query = azureFunctionRequest.query
+    this.params = azureFunctionRequest.params
+    this.body = azureFunctionRequest.body as unknown
     this.rawBody = azureFunctionRequest.rawBody
   }
 
@@ -50,18 +50,22 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
   }
 
   public unhandledError(error: unknown): PromiseToo<unknown> {
-    throw error;
+    throw error
   }
 
-  public handledError(data: unknown): unknown {
+  public handledError(data: unknown): PromiseToo<unknown> {
     return this.success(data)
   }
 }
 
-export interface HttpContext<T extends Partial<HttpTemplate> = {}> extends Context, Bluish.HttpContext {}
+export interface HttpContext<T extends Partial<HttpTemplate> = {}>
+  extends Context,
+    Bluish.HttpContext<T> {}
 
 declare global {
   export namespace Bluish {
-    export interface HttpContext {}
+    export interface HttpContext<T extends Partial<HttpTemplate>> {
+      __httpTemplate__: T
+    }
   }
 }

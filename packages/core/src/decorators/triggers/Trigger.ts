@@ -1,23 +1,34 @@
-import { Binding } from "../../models/metadata/Binding";
-import { Metadata } from "../../models/metadata";
-import { Trigger as TriggerMetadata } from "../../models/metadata/Trigger";
-import { Context } from "../../models/contexts/Context";
+import { Binding } from '../../models/metadata/Binding'
+import { Metadata } from '../../models/metadata'
+import { Trigger as TriggerMetadata } from '../../models/metadata/Trigger'
+import { Context } from '../../models/contexts/Context'
+import { TriggerDecorator } from '../../typings/decorators'
+import { Fn } from '../../typings/helpers'
 
-export interface TriggerOptions {
+type TriggerConstructor<C extends Context> = new (
+  ContextConstructor: new (...args: any[]) => C,
+  name: string,
+  property: string,
+) => TriggerMetadata
+
+export interface TriggerOptions<C extends Context> {
   name?: string
   bindings?: Binding[]
-  Trigger?: new (Context: new (...args: any[]) => Context, name: string, property: string) => TriggerMetadata
-  Context: new (...args: any[]) => Context
+  Trigger?: TriggerConstructor<C>
+  Context: new (...args: any[]) => C
 }
 
-export type TriggerHandler = (...args: any[]) => any
-
-export const Trigger = ({ Context, Trigger = TriggerMetadata, name, bindings = [] }: TriggerOptions) => {
-  return (target: Object, propertyKey: string, descriptor?: TypedPropertyDescriptor<TriggerHandler>) => {
+export function Trigger<C extends Context>({
+  Context: ContextConstructor,
+  Trigger: TriggerConstructor = TriggerMetadata,
+  name,
+  bindings = [],
+}: TriggerOptions<C>): TriggerDecorator<Fn> {
+  return (target, propertyKey) => {
     Metadata.load(target.constructor, true)
-      .triggers
-      .push(new Trigger(Context, name ?? target.constructor.name, propertyKey))
-      .bindings
-      .push(...bindings)
+      .triggers.push(
+        new TriggerConstructor(ContextConstructor, name ?? target.constructor.name, propertyKey),
+      )
+      .bindings.push(...bindings)
   }
 }

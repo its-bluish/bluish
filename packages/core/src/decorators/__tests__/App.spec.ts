@@ -1,9 +1,9 @@
-import { Runner } from "../../models/Runner"
-import { MockContext } from "../../test-utils/MockContext"
-import { run } from "../../test-utils/run"
-import { App } from "../App"
-import { OnInitialize } from "../OnInitialize"
-import { Trigger } from "../triggers/Trigger"
+import { Runner } from '../../models/Runner'
+import { MockContext } from '../../test-utils/MockContext'
+import { run } from '../../test-utils/run'
+import { App } from '../App'
+import { OnInitialize } from '../OnInitialize'
+import { Trigger } from '../triggers/Trigger'
 
 describe('App', () => {
   describe('Hooks', () => {

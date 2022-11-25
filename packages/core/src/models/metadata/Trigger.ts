@@ -1,9 +1,9 @@
-import { BindingCollection } from "./BindingCollection"
-import { Metadata } from "."
-import { HookCollection } from "./HookCollection"
-import { PluginCollection } from "./PluginCollection"
-import { Context as ContextClass } from "../contexts/Context"
-import { ArgCollection } from "./ArgCollection"
+import { BindingCollection } from './BindingCollection'
+import { Metadata } from '.'
+import { HookCollection } from './HookCollection'
+import { PluginCollection } from './PluginCollection'
+import { Context as ContextClass } from '../contexts/Context'
+import { ArgCollection } from './ArgCollection'
 
 export class Trigger {
   public bindings = new BindingCollection(this)
@@ -16,13 +16,17 @@ export class Trigger {
 
   public metadata!: Metadata
 
-  public runner: string = 'core'
+  public runner = 'core'
 
-  constructor(public Context: new (...args: any[]) => ContextClass, public name: string, public property: string) {}
+  constructor(
+    public Context: new (...args: any[]) => ContextClass,
+    public name: string,
+    public property: string,
+  ) {}
 
   public toAzureFunctionConfiguration() {
     return {
-      bindings: this.bindings.toAzureFunctionConfiguration()
+      bindings: this.bindings.toAzureFunctionConfiguration(),
     }
   }
 }

@@ -1,8 +1,5 @@
 export abstract class Builder {
-  constructor(
-    protected rootDir: string,
-    protected outDir: string
-  ) {}
+  constructor(protected rootDir: string, protected outDir: string) {}
 
   public abstract find(path: string): Promise<string> | string
 

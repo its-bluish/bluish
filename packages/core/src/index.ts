@@ -8,7 +8,7 @@ export { Use } from './decorators/Use'
 export { Bind } from './decorators/Bind'
 
 export { HttpTrigger, HttpTriggerOptions } from './decorators/triggers/HttpTrigger'
-export { Trigger as TriggerD, TriggerHandler, TriggerOptions } from './decorators/triggers/Trigger'
+export { Trigger as TriggerD, TriggerOptions } from './decorators/triggers/Trigger'
 
 export { Runner } from './models/Runner'
 export { Plugin } from './models/Plugin'

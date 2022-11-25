@@ -1,5 +1,6 @@
 import { IHost } from '../interfaces/IHost'
 import { ApplicationMetadata } from '../models/metadata/Application'
+import { ApplicationDecorator } from '../typings/decorators'
 
 export interface AppConfig {
   http?: {
@@ -8,7 +9,10 @@ export interface AppConfig {
   host?: IHost
 }
 
-export const App = ({ host, http: { prefix: httpPrefix } = {} }: AppConfig = {}): ClassDecorator => {
+export function App({
+  host,
+  http: { prefix: httpPrefix } = {},
+}: AppConfig = {}): ApplicationDecorator {
   return (target) => {
     const applicationMetadata = ApplicationMetadata.set(target)
 

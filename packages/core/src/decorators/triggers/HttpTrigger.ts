@@ -1,9 +1,11 @@
-import { Trigger, TriggerHandler } from "./Trigger"
-import { Binding } from "../../models/metadata/Binding"
-import { HttpContext, HttpMethod } from "../../models/contexts/HttpContext"
-import { Bind } from "../Bind"
+import { Trigger } from './Trigger'
+import { Binding } from '../../models/metadata/Binding'
+import { HttpContext, HttpMethod } from '../../models/contexts/HttpContext'
+import { Bind } from '../Bind'
+import { TriggerDecorator } from '../../typings/decorators'
+import { Fn } from '../../typings/helpers'
 
-const HTTP_ROUTE_NORMALIZER_REGEXP = /(^\/+|\/+$)/
+const HTTP_ROUTE_NORMALIZER_REGEXP = /^\/+|\/+$/
 
 export interface HttpTriggerOptions {
   name?: string
@@ -13,19 +15,19 @@ export interface HttpTriggerOptions {
 export function HttpTrigger(
   route: string,
   methods: HttpMethod | HttpMethod[],
-  { type }: HttpTriggerOptions = {}
-) {
-  return (target: Object, propertyKey: string, descriptor?: TypedPropertyDescriptor<TriggerHandler>) => {
+  { type }: HttpTriggerOptions = {},
+): TriggerDecorator<Fn> {
+  return (target, propertyKey, descriptor) => {
     Trigger({
       Context: HttpContext,
       bindings: [
         new Binding('httpTrigger', 'req', 'in', {
           route: route.replace(HTTP_ROUTE_NORMALIZER_REGEXP, ''),
           methods: Array.isArray(methods) ? methods : [methods],
-          dataType: type
+          dataType: type,
         }),
         new Binding('http', '$return', 'out'),
-      ]
+      ],
     })(target, propertyKey, descriptor)
   }
 }
@@ -68,32 +70,30 @@ export namespace HttpTrigger {
   }
 
   export function Body(selector?: (body: HttpContext['body'], context: HttpContext) => unknown) {
-    if (selector)
-
-      return Bind((context: HttpContext) => selector(context.body, context))
+    if (selector) return Bind((context: HttpContext) => selector(context.body, context))
 
     return Bind((context: HttpContext) => context.body)
   }
 
-  export function Param(nameOrSelector?: string | ((params: HttpContext['params'], context: HttpContext) => unknown)) {
+  export function Param(
+    nameOrSelector?: string | ((params: HttpContext['params'], context: HttpContext) => unknown),
+  ) {
     if (typeof nameOrSelector === 'string')
-    
       return Bind((context: HttpContext) => context.params[nameOrSelector])
 
     if (typeof nameOrSelector === 'function')
-    
       return Bind((context: HttpContext) => nameOrSelector(context.params, context))
 
     return Bind((context: HttpContext) => context.params)
   }
 
-  export function Query(nameOrSelector?: string | ((query: HttpContext['query'], context: HttpContext) => unknown)) {
+  export function Query(
+    nameOrSelector?: string | ((query: HttpContext['query'], context: HttpContext) => unknown),
+  ) {
     if (typeof nameOrSelector === 'string')
-    
       return Bind((context: HttpContext) => context.query[nameOrSelector])
 
     if (typeof nameOrSelector === 'function')
-    
       return Bind((context: HttpContext) => nameOrSelector(context.query, context))
 
     return Bind((context: HttpContext) => context.query)

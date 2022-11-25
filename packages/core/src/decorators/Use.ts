@@ -1,18 +1,27 @@
-import { Metadata } from "../models/metadata";
-import { Plugin } from "../models/Plugin";
-import { wait } from "../tools/wait";
-import { TriggerHandler } from "./triggers/Trigger";
+import { Metadata } from '../models/metadata'
+import { Plugin } from '../models/Plugin'
+import { wait } from '../tools/wait'
+import { Fn } from '../typings/helpers'
 
-export const Use = (plugin: Plugin) => {
-  return <T extends TriggerHandler>(target: Function | Object, property?: string, descriptor?: TypedPropertyDescriptor<T>) => {
-    if (property) wait.any(target, property)
-      .then(metadata => {
-        if (!(metadata instanceof Metadata)) throw new Error('TODO');
-        return metadata
-      })
-      .then(metadata => metadata.triggers.findOneByPropertyOrFail(property).plugins.push(plugin))
+export type UseDecorator = (
+  target: Function | Object,
+  property?: string,
+  descriptor?: TypedPropertyDescriptor<Fn>,
+) => void
 
-    else wait.any(target)
-      .then(metadata => metadata.plugins.push(plugin))
+export function Use(plugin: Plugin): UseDecorator {
+  return (target: Function | Object, property?: string) => {
+    if (property)
+      return void wait
+        .any(target, property)
+        .then((metadata) => {
+          if (!(metadata instanceof Metadata)) throw new Error('TODO')
+          return metadata
+        })
+        .then((metadata) =>
+          metadata.triggers.findOneByPropertyOrFail(property).plugins.push(plugin),
+        )
+
+    return void wait.any(target).then((metadata) => metadata.plugins.push(plugin))
   }
 }

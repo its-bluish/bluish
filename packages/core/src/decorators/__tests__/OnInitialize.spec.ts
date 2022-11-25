@@ -1,9 +1,9 @@
-import { Runner } from "../../models/Runner"
-import { Trigger } from "../triggers/Trigger"
+import { Runner } from '../../models/Runner'
+import { Trigger } from '../triggers/Trigger'
 import { run } from '../../test-utils/run'
-import { OnInitialize } from "../OnInitialize"
-import { Context } from "../../models/contexts/Context"
-import { MockContext } from "../../test-utils/MockContext"
+import { OnInitialize } from '../OnInitialize'
+import { Context } from '../../models/contexts/Context'
+import { MockContext } from '../../test-utils/MockContext'
 
 describe('OnInitialize', () => {
   it('called as trigger decorator', async () => {
@@ -11,12 +11,12 @@ describe('OnInitialize', () => {
     class OnInitializeTest {
       @Trigger({ Context: MockContext })
       @OnInitialize(onInitialize)
-      public run() {}
+      public run = () => ({})
     }
 
     await run(new Runner(OnInitializeTest, 'run'))
 
-    expect(onInitialize).toHaveBeenCalledWith(expect.any(Context))
+    expect(onInitialize).toHaveBeenCalledWith(expect.any(MockContext))
   })
 
   it('called as class decorator', async () => {
@@ -25,12 +25,12 @@ describe('OnInitialize', () => {
     @OnInitialize(onInitialize)
     class OnInitializeTest {
       @Trigger({ Context: MockContext })
-      public run() {}
+      public run = () => ({})
     }
 
     await run(new Runner(OnInitializeTest, 'run'))
 
-    expect(onInitialize).toHaveBeenCalledWith(expect.any(Context))
+    expect(onInitialize).toHaveBeenCalledWith(expect.any(MockContext))
   })
 
   it('called as a decorator of a property other than the trigger', async () => {
@@ -38,24 +38,16 @@ describe('OnInitialize', () => {
 
     class OnInitializeTest {
       @Trigger({ Context: MockContext })
-      public run() {}
+      public run = () => ({})
 
       @OnInitialize()
       public init(context: Context) {
         onInitialize(context)
       }
     }
-  
+
     await run(new Runner(OnInitializeTest, 'run'))
 
-    expect(onInitialize).toHaveBeenCalledWith(expect.any(Context))
+    expect(onInitialize).toHaveBeenCalledWith(expect.any(MockContext))
   })
 })
-
-declare global {
-  namespace jest {
-    interface Expect {
-      any<T extends Constructor | (abstract new (...args: any[]) => any)>(classType: T): T extends Func ? ReturnType<T> : InstanceType<T>;
-    }
-  }
-}

@@ -1,4 +1,4 @@
-import { Trigger } from "./Trigger";
+import { Trigger } from './Trigger'
 
 export class Binding {
   public trigger!: Trigger
@@ -7,7 +7,7 @@ export class Binding {
     public type: string,
     public name: string,
     public direction: 'in' | 'out',
-    others: Record<string, unknown> = {}
+    others: Record<string, unknown> = {},
   ) {
     Object.assign(this, others)
   }
@@ -15,11 +15,9 @@ export class Binding {
   public toAzureFunctionConfiguration() {
     return {
       ...this,
-      trigger: undefined
+      trigger: void 0,
     }
   }
-}
 
-export interface Binding {
   [key: string]: unknown
 }

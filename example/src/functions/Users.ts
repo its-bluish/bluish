@@ -1,4 +1,4 @@
-import { Bind, HttpContext, HttpTrigger } from '@bluish/core'
+import { HttpTrigger } from '@bluish/core'
 
 import { User } from '../entities/User'
 import { Schema } from '../handlers/Schema'

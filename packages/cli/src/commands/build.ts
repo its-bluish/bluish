@@ -7,18 +7,29 @@ import { TriggerBuilderCollection } from '../models/TriggerBuilderCollection'
 import { glob } from '../tools/glob'
 import { _import } from '../tools/_import'
 
+interface BuildOptions {
+  config: string
+  input: string
+  output: string
+}
+
 export const build = new Command('build')
 
 build.option('-c, --config <path>', '', 'bluish.config.ts')
-build.option('-o, --output <path>', '', 'dist')
 build.option('-i, --input <path>', '', (value) => path.resolve(value), process.cwd())
+build.option('-o, --output <path>', '', 'dist')
 
 build.action(async () => {
-  const opts = build.opts()
+  const opts = build.opts<BuildOptions>()
 
-  const configuration = await Configuration.from(opts.input, opts.config, path.resolve(opts.input, opts.output))
+  const configuration = await Configuration.from(
+    opts.input,
+    opts.config,
+    path.resolve(opts.input, opts.output),
+  )
 
-  if (await exists(configuration.output)) await fs.rm(configuration.output, { force: true, recursive: true })
+  if (await exists(configuration.output))
+    await fs.rm(configuration.output, { force: true, recursive: true })
 
   await fs.mkdir(configuration.output)
 
@@ -30,11 +41,13 @@ build.action(async () => {
 
   const modules = await Promise.all(
     modulesPaths
-      .map(constructorPath => path.join(opts.input, constructorPath))
-      .map(constructorPath => _import<Record<string, Function>>(constructorPath, true))
+      .map((constructorPath) => path.join(opts.input, constructorPath))
+      .map(async (constructorPath) => _import<Record<string, Function>>(constructorPath, true)),
   )
 
   const triggersBuilder = new TriggerBuilderCollection(builder, configuration)
 
-  await Promise.all(modules.map(module => triggersBuilder.addByModuleExportAndBuild(module)))
+  await Promise.all(
+    modules.map(async (module) => triggersBuilder.addByModuleExportAndBuild(module)),
+  )
 })

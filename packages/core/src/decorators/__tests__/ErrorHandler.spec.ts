@@ -1,8 +1,8 @@
-import { Runner } from "../../models/Runner"
-import { MockContext } from "../../test-utils/MockContext"
-import { run } from "../../test-utils/run"
-import { ErrorHandler } from "../ErrorHandler"
-import { Trigger } from "../triggers/Trigger"
+import { Runner } from '../../models/Runner'
+import { MockContext } from '../../test-utils/MockContext'
+import { run } from '../../test-utils/run'
+import { ErrorHandler } from '../ErrorHandler'
+import { Trigger } from '../triggers/Trigger'
 
 describe('ErrorHandler', () => {
   it('.', async () => {
@@ -14,15 +14,18 @@ describe('ErrorHandler', () => {
         return {
           status: 500,
           body: {
-            message: error.message
-          }
+            message: error.message,
+          },
         }
       })
       public run() {
-        throw new Error('testing');
+        throw new Error('testing')
       }
     }
 
-    await expect(run(new Runner(TriggerTest, 'run'))).resolves.toEqual({ status: 500, body: { message: 'testing' } })
+    await expect(run(new Runner(TriggerTest, 'run'))).resolves.toEqual({
+      status: 500,
+      body: { message: 'testing' },
+    })
   })
 })

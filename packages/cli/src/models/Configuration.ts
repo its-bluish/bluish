@@ -1,11 +1,6 @@
-import path from "path"
-import { Builder } from "./Builder"
-import globCallback from 'glob'
-import { promisify } from 'util'
-import { Metadata } from '@bluish/core'
-import { MODULE_EXPORT_NAME } from "../constants"
-
-const glob = promisify(globCallback)
+import path from 'path'
+import { Builder } from './Builder'
+import { _import } from '../tools/_import'
 
 export interface ConfigurationOptions {
   input: string
@@ -18,17 +13,17 @@ export interface BluishConfiguration {
   builder?: string
 }
 
-const DEFAULT_APPLICATION = '@bluish/core'
-
 export class Configuration {
   public static async from(input: string, filename: string, output: string) {
-    const maybeConfig = await import(path.resolve(input, filename))
-    const config = maybeConfig.default ?? maybeConfig ?? {}
+    const config = await _import<BluishConfiguration>(path.resolve(input, filename))
 
     return new this({ input, output }, config)
   }
 
-  constructor(protected options: ConfigurationOptions, protected configuration: BluishConfiguration) {}
+  constructor(
+    protected options: ConfigurationOptions,
+    protected configuration: BluishConfiguration,
+  ) {}
 
   public get input() {
     return this.options.input
@@ -43,48 +38,29 @@ export class Configuration {
   }
 
   public get application() {
-    return this.configuration.application
-      ? path.resolve(this.options.input, this.configuration.application)
-      : DEFAULT_APPLICATION
+    return (
+      this.configuration.application &&
+      path.resolve(this.options.input, this.configuration.application)
+    )
   }
 
   public async getApplication(): Promise<Function | null> {
-    const { default: Application } = await import(this.application)
-
-    return Application ?? null
+    return _import<Function>(this.application)
   }
 
   public get globs(): string[] {
     if (!this.configuration.functions) return []
 
-    return Array.isArray(this.configuration.functions) ? this.configuration.functions : [this.configuration.functions]
-  }
-
-  public async getTriggers() {
-    if (!this.configuration.functions) return []
-
-    const { globs } = this
-
-    const files = await Promise.all(globs.map(pattern => glob(path.join(this.input, pattern))))
-
-    const classes = await Promise.all(
-      files.flat(1).map(async file => {
-        const module = await import(file)
-
-        const functions = Object.entries<Function>(module)
-
-        return functions.map(([functionExportName, func]) => Object.assign(func, { [MODULE_EXPORT_NAME]: functionExportName }))
-      })
-    )
-
-    return classes.flat()
-      .flatMap((func) => Metadata.load(func)?.triggers.toArray())
-      .filter(<T>(item: T): item is Exclude<T, undefined> => !!item)
+    return Array.isArray(this.configuration.functions)
+      ? this.configuration.functions
+      : [this.configuration.functions]
   }
 
   public async createBuilder() {
-    const { default: Builder } = await import(`../builders/${this.builder}`)
+    const BuilderConstructor = await _import<new (input: string, output: string) => Builder>(
+      path.join(__dirname, '..', 'builders', this.builder),
+    )
 
-    return new Builder(this.input, this.output) as Builder
+    return new BuilderConstructor(this.input, this.output)
   }
 }

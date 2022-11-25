@@ -1,6 +1,6 @@
-import { Collection } from "../Collection";
-import { Binding } from "./Binding";
-import { Trigger } from "./Trigger";
+import { Collection } from '../Collection'
+import { Binding } from './Binding'
+import { Trigger } from './Trigger'
 
 export class BindingCollection extends Collection<Binding> {
   constructor(public trigger: Trigger) {
@@ -12,6 +12,6 @@ export class BindingCollection extends Collection<Binding> {
   }
 
   public toAzureFunctionConfiguration() {
-    return this.toArray().map(binding => binding.toAzureFunctionConfiguration())
+    return this.toArray().map((binding) => binding.toAzureFunctionConfiguration())
   }
 }

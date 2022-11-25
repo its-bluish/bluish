@@ -5,9 +5,11 @@ export function getDecoratedFilePath(constructor: Function) {
 
   Error.captureStackTrace(trace, constructor)
 
-  const file = trace.stack.split(/\n/g).find(file => file.includes('__decorate'))!
+  const file = trace.stack.split(/\n/g).find((file) => file.includes('__decorate'))
 
-  if (!file && process.env._BLUISH_RUNNING_LOCAL_TESTS !== 'true') throw new Error("TODO");
+  if (!file && process.env.BLUISH_RUNNING_LOCAL_TESTS !== 'true') throw new Error('TODO')
+
+  if (!file) return ''
 
   const { filepath } = rule.exec(file)?.groups ?? {}
 

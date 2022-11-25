@@ -1,7 +1,7 @@
-import { Context } from "../contexts/Context";
-import { Trigger } from "./Trigger";
+import { Context } from '../contexts/Context'
+import { Trigger } from './Trigger'
 
-export type ArgFactory<C extends Context> = (context: C) => any
+export type ArgFactory<C extends Context> = (context: C) => unknown
 
 export class Arg<C extends Context> {
   public trigger!: Trigger

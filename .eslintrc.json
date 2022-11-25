@@ -1,0 +1,28 @@
+{
+  "extends": ["@bluish"],
+  "env": {
+    "es2021": true,
+    "node": true,
+    "jest": true
+  },
+  "root": true,
+  "globals": {
+    "Bluish": "readonly"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.mts", "*.cts", "*.tsx"],
+      "rules": {
+        "no-undef": "off"
+      }
+    },
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "max-classes-per-file": ["off"],
+        "max-lines-per-function": ["off"],
+        "@typescript-eslint/unbound-method": ["off"]
+      }
+    }
+  ]
+}

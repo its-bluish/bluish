@@ -1,38 +1,43 @@
-import { Context } from "../models/contexts/Context";
-import { Metadata } from "../models/metadata";
-import { Hook } from "../models/metadata/Hook";
-import { wait } from "../tools/wait";
-import { PromiseToo } from "../typings/PromiseToo";
-import { TriggerHandler } from "./triggers/Trigger";
+import { Context } from '../models/contexts/Context'
+import { Metadata } from '../models/metadata'
+import { Hook } from '../models/metadata/Hook'
+import { wait } from '../tools/wait'
+import { PromiseToo } from '../typings/PromiseToo'
+import {
+  ApplicationDecorator,
+  SiblingTriggerDecorator,
+  TriggerDecorator,
+  RootTriggerDecorator,
+} from '../typings/decorators'
 
-export interface Transform {
-  (): (target: Object, property: string) => void
-  (fn: (data: unknown, context: Context) => PromiseToo<unknown>):
-    <T extends TriggerHandler>(target: Function | Object, property?: string, descriptor?: TypedPropertyDescriptor<T>) => void
-}
+type Callback<C extends Context> = (data: unknown, context: C) => PromiseToo<unknown>
 
-export const Transform: Transform = (maybeFn?: (data: unknown, context: Context) => PromiseToo<unknown>) => {
-  return <T extends TriggerHandler>(target: Function | Object, property?: string, descriptor?: TypedPropertyDescriptor<T>) => {
-    if (maybeFn)
-
-      if (property) wait.any(target, property)
-        .then(metadata => {
-          if (!(metadata instanceof Metadata)) throw new Error('TODO');
+export function Transform<C extends Context>(): SiblingTriggerDecorator<Callback<C>>
+export function Transform<C extends Context>(fn: Callback<C>): TriggerDecorator<Callback<C>>
+export function Transform<C extends Context>(fn: Callback<C>): ApplicationDecorator
+export function Transform<C extends Context>(fn: Callback<C>): RootTriggerDecorator
+export function Transform<C extends Context>(fn?: Callback<C>) {
+  return (target: Function | Object, property?: string) => {
+    if (fn && property)
+      return void wait
+        .any(target, property)
+        .then((metadata) => {
+          if (!(metadata instanceof Metadata)) throw new Error('TODO')
           return metadata
         })
-        .then(metadata => {
-          metadata.triggers
-            .findOneByPropertyOrFail(property)
-            .hooks
-            .push(new Hook('transform', maybeFn))
+        .then((metadata) => {
+          metadata.triggers.findOneByPropertyOrFail(property).hooks.push(new Hook('transform', fn))
         })
 
-      else wait.any(target)
-        .then(metadata => metadata.hooks.push(new Hook('transform', maybeFn)))
+    if (fn)
+      return void wait
+        .any(target)
+        .then((metadata) => metadata.hooks.push(new Hook('transform', fn)))
 
-    else if (!property) throw new Error('TODO');
+    if (!property) throw new Error('TODO')
 
-    else wait.any(target)
-      .then(metadata => metadata.hooks.push(new Hook('transform', property)))
+    return void wait
+      .any(target)
+      .then((metadata) => metadata.hooks.push(new Hook('transform', property)))
   }
 }

@@ -5,13 +5,15 @@ import path from 'path'
 
 const configuration: Config.InitialOptions = {
   preset: 'ts-jest',
-  projects: glob.sync('<rootDir>/packages/*')
-    .filter(fullpath => fs.existsSync(path.join(fullpath, 'package.json')))
-    .map(fullpath => {
-      const packageJson = require(path.join(fullpath, 'package.json'))
+  projects: glob
+    .sync('<rootDir>/packages/*')
+    .filter((fullpath) => fs.existsSync(path.join(fullpath, 'package.json')))
+    .map((fullpath) => {
+      const packageJsonContext = fs.readFileSync(path.join(fullpath, 'package.json'), 'utf-8')
+      const packageJson = JSON.parse(packageJsonContext) as Record<string, unknown>
       return {
         preset: 'ts-jest',
-        displayName: packageJson.name,
+        displayName: packageJson.name as string,
         testMatch: [fullpath],
         setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
       }

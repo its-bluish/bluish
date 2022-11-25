@@ -1,12 +1,7 @@
-import { getDecoratedFilePath } from "../../tools/getDecoratedFilePath";
-import { wait } from "../../tools/wait";
-import { Host } from "../Host";
-import { HookCollection } from "./HookCollection";
-import { PluginCollection } from "./PluginCollection";
-
-declare global {
-  var bluishApplicationMetadata: ApplicationMetadata | null;
-}
+import { wait } from '../../tools/wait'
+import { Host } from '../Host'
+import { HookCollection } from './HookCollection'
+import { PluginCollection } from './PluginCollection'
 
 global.bluishApplicationMetadata = null
 
@@ -31,7 +26,6 @@ export class ApplicationMetadata {
     if (typeof target !== 'function') return this.set(target.constructor)
 
     if (globalThis.bluishApplicationMetadata?.target !== target) {
-
       const applicationMetadata: ApplicationMetadata = new this(target)
 
       globalThis.bluishApplicationMetadata = applicationMetadata
@@ -51,4 +45,9 @@ export class ApplicationMetadata {
   protected constructor(public target: Function) {
     wait.cast(this)
   }
+}
+
+declare global {
+  // eslint-disable-next-line no-inner-declarations, vars-on-top, no-var
+  var bluishApplicationMetadata: ApplicationMetadata | null
 }

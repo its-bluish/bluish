@@ -1,18 +1,18 @@
-import { IHost as IHost } from '../interfaces/IHost'
+import { IHost } from '../interfaces/IHost'
 
 export class Host {
   public extensionBundle: IHost.ExtensionBundle = {
     id: 'Microsoft.Azure.Functions.ExtensionBundle',
-    version: '[3.*, 4.0.0)'
+    version: '[3.*, 4.0.0)',
   }
 
   public logging: IHost.Logging = {
     applicationInsights: {
       samplingSettings: {
         isEnabled: true,
-        excludedTypes: 'Request'
-      }
-    }
+        excludedTypes: 'Request',
+      },
+    },
   }
 
   constructor(host: IHost = {}) {
@@ -30,19 +30,19 @@ export class Host {
     singleton,
     version,
     watchDirectories,
-    watchFiles
+    watchFiles,
   }: IHost = {}) {
-    if (aggregator !== undefined) this.aggregator = aggregator
-    if (extensions !== undefined) this.extensions = extensions
-    if (functionTimeout !== undefined) this.functionTimeout = functionTimeout
-    if (functions !== undefined) this.functions = functions
-    if (healthMonitor !== undefined) this.healthMonitor = healthMonitor
-    if (logging !== undefined) this.logging = logging
-    if (managedDependency !== undefined) this.managedDependency = managedDependency
-    if (singleton !== undefined) this.singleton = singleton
-    if (version !== undefined) this.version = version
-    if (watchDirectories !== undefined) this.watchDirectories = watchDirectories
-    if (watchFiles !== undefined) this.watchFiles = watchFiles
+    if (aggregator !== void 0) this.aggregator = aggregator
+    if (extensions !== void 0) this.extensions = extensions
+    if (functionTimeout !== void 0) this.functionTimeout = functionTimeout
+    if (functions !== void 0) this.functions = functions
+    if (healthMonitor !== void 0) this.healthMonitor = healthMonitor
+    if (logging !== void 0) this.logging = logging
+    if (managedDependency !== void 0) this.managedDependency = managedDependency
+    if (singleton !== void 0) this.singleton = singleton
+    if (version !== void 0) this.version = version
+    if (watchDirectories !== void 0) this.watchDirectories = watchDirectories
+    if (watchFiles !== void 0) this.watchFiles = watchFiles
 
     return this
   }

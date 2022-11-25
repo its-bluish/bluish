@@ -1,4 +1,4 @@
-import { Context } from "../models/contexts/Context";
+import { Context } from '../models/contexts/Context'
 
 export class MockContext extends Context {
   public handledError = (data: unknown) => this.success(data)

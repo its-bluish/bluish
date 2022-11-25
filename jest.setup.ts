@@ -1,1 +1,1 @@
-process.env._BLUISH_RUNNING_LOCAL_TESTS = 'true'
+process.env.BLUISH_RUNNING_LOCAL_TESTS = 'true'
