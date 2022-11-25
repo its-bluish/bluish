@@ -6,6 +6,14 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "bluish",
+    "azure",
+    "azure-functions",
+    "typescript",
+    "decorators",
+    "bluish-plugin"
+  ],
   "scripts": {
     "build": "rimraf dist && tsc",
     "prepublish": "yarn build"

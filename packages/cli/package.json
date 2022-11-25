@@ -6,6 +6,16 @@
     "bluish": "./dist/bin/index.js",
     "bluish-create-app": "./dist/bin/bluish-create-app.js"
   },
+  "keywords": [
+    "bluish",
+    "azure",
+    "azure-functions",
+    "typescript",
+    "decorators",
+    "bin",
+    "command",
+    "cli"
+  ],
   "files": [
     "dist"
   ],
