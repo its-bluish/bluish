@@ -1,9 +1,9 @@
-import { Collection } from '../Collection'
+import { Collection } from '../helpers/Collection'
 import { Binding } from './Binding'
-import { Trigger } from './Trigger'
+import { TriggerConfiguration } from './TriggerConfiguration'
 
 export class BindingCollection extends Collection<Binding> {
-  constructor(public trigger: Trigger) {
+  constructor(public trigger: TriggerConfiguration) {
     super()
   }
 

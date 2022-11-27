@@ -14,6 +14,10 @@
     "decorators",
     "bluish-plugin"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/its-bluish/bluish/tree/main/plugins/urlencoded"
+  },
   "scripts": {
     "build": "rimraf dist && tsc",
     "prepublish": "yarn build"
@@ -27,6 +31,6 @@
     "@types/type-is": "^1.6.3"
   },
   "peerDependencies": {
-    "@bluish/core": "0.0.0"
+    "@bluish/core": "^0.0.1-alpha.2"
   }
 }

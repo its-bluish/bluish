@@ -1,8 +1,8 @@
 import { IHost } from '../interfaces/IHost'
-import { ApplicationMetadata } from '../models/metadata/Application'
+import { ApplicationConfiguration } from '../models/ApplicationConfiguration'
 import { ApplicationDecorator } from '../typings/decorators'
 
-export interface AppConfig {
+export interface AppOptions {
   http?: {
     prefix?: string
   }
@@ -12,11 +12,11 @@ export interface AppConfig {
 export function App({
   host,
   http: { prefix: httpPrefix } = {},
-}: AppConfig = {}): ApplicationDecorator {
+}: AppOptions = {}): ApplicationDecorator {
   return (target) => {
-    const applicationMetadata = ApplicationMetadata.set(target)
+    const applicationConfiguration = ApplicationConfiguration.set(target)
 
-    applicationMetadata.host.set({ extensions: { http: { routePrefix: httpPrefix } } })
-    applicationMetadata.host.set(host)
+    applicationConfiguration.host.set({ extensions: { http: { routePrefix: httpPrefix } } })
+    applicationConfiguration.host.set(host)
   }
 }

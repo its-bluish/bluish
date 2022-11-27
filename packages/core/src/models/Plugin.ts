@@ -6,7 +6,7 @@ export abstract class Plugin {
 
   public onDestroy?(context: Context): PromiseToo<void>
 
-  public onError?(error: unknown, context: Context): PromiseToo<void>
+  public onError?(error: unknown, context: Context): PromiseToo<unknown>
 
-  public transform?(data: unknown, context: Context): PromiseToo<unknown>
+  public onSuccess?(payload: unknown, context: Context): PromiseToo<unknown>
 }

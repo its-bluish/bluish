@@ -36,3 +36,9 @@ run.http = async <P extends string, T extends Record<P, Fn>>(
       rawBody,
     },
   )
+
+run.testing = async <T extends { testing(...args: any[]): unknown }>(
+  Testing: new () => T,
+  context: Partial<AzureFunctionContext> = {},
+  arg: unknown = {},
+) => run(new Runner(Testing, 'testing'), context, arg)

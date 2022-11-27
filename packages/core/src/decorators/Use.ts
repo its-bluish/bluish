@@ -1,7 +1,8 @@
-import { Metadata } from '../models/metadata'
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import { Plugin } from '../models/Plugin'
-import { wait } from '../tools/wait'
 import { Fn } from '../typings/helpers'
+import { waitForTriggerConfiguration } from '../tools/waitForTriggerConfiguration'
+import { waitForSourceOrApplicationConfiguration } from '../tools/waitForSourceOrApplicationConfiguration'
 
 export type UseDecorator = (
   target: Function | Object,
@@ -12,16 +13,12 @@ export type UseDecorator = (
 export function Use(plugin: Plugin): UseDecorator {
   return (target: Function | Object, property?: string) => {
     if (property)
-      return void wait
-        .any(target, property)
-        .then((metadata) => {
-          if (!(metadata instanceof Metadata)) throw new Error('TODO')
-          return metadata
-        })
-        .then((metadata) =>
-          metadata.triggers.findOneByPropertyOrFail(property).plugins.push(plugin),
-        )
+      return waitForTriggerConfiguration(target, property, (triggerConfiguration) => {
+        triggerConfiguration.plugins.push(plugin)
+      })
 
-    return void wait.any(target).then((metadata) => metadata.plugins.push(plugin))
+    return waitForSourceOrApplicationConfiguration(target, (sourceOrApplicationConfiguration) => {
+      sourceOrApplicationConfiguration.plugins.push(plugin)
+    })
   }
 }

@@ -1,48 +1,11 @@
 import { Context } from '../models/contexts/Context'
-import { Metadata } from '../models/metadata'
-import { Hook } from '../models/metadata/Hook'
-import { wait } from '../tools/wait'
-import {
-  ApplicationImplementarionDecorator,
-  SiblingTriggerDecorator,
-  RootTriggerDecorator,
-  ApplicationDecorator,
-  TriggerDecorator,
-} from '../typings/decorators'
-import { Fn } from '../typings/helpers'
 import { PromiseToo } from '../typings/PromiseToo'
+import { On, OnDecorator, OnDecoratorWithFn } from './On'
 
-type Callback<C extends Context> = (context: C) => PromiseToo<void>
+export type OnDestroyCallback<C extends Context> = (context: C) => PromiseToo<void>
 
-export function OnDestroy<C extends Context>(): SiblingTriggerDecorator<Callback<C>> &
-  ApplicationImplementarionDecorator<Callback<C>>
-export function OnDestroy<C extends Context>(
-  fn: Callback<C>,
-): RootTriggerDecorator & ApplicationDecorator & TriggerDecorator<Fn>
-export function OnDestroy(maybeFn?: (context: Context) => PromiseToo<void>) {
-  return (target: Function | Object, property?: string) => {
-    if (maybeFn && property)
-      return void wait
-        .any(target, property)
-        .then((metadata) => {
-          if (!(metadata instanceof Metadata)) throw new Error('TODO')
-          return metadata
-        })
-        .then((metadata) => {
-          metadata.triggers
-            .findOneByPropertyOrFail(property)
-            .hooks.push(new Hook('destroy', maybeFn))
-        })
-
-    if (maybeFn)
-      return void wait
-        .any(target)
-        .then((metadata) => metadata.hooks.push(new Hook('destroy', maybeFn)))
-
-    if (!property) throw new Error('TODO')
-
-    return void wait
-      .any(target)
-      .then((metadata) => metadata.hooks.push(new Hook('destroy', property)))
-  }
+export function OnDestroy<C extends Context>(): OnDecorator<OnDestroyCallback<C>>
+export function OnDestroy<C extends Context>(fn: OnDestroyCallback<C>): OnDecoratorWithFn
+export function OnDestroy<C extends Context>(maybeFn?: OnDestroyCallback<C>) {
+  return On('destroy', maybeFn)
 }

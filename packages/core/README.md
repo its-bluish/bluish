@@ -1,150 +1,129 @@
-<h1 align="center">
-  Bluish
-</h1>
+# Bluish Core
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/@bluish/core">
-    <img src="https://img.shields.io/npm/v/@bluish/core?style=for-the-badge">
-  </a>
-  <img src="https://img.shields.io/github/workflow/status/its-bluish/bluish/CI?label=CI&style=for-the-badge">
-</p>
+## Triggers
 
-Bluish is a framework for creating Azure functions from programmatic meta information.
-
-It helps to write azure trigger functions directly in your class, without the need for auxiliary files and gives you autonomy to create interceptors to help and focus specifically on what the function has to deliver.
-
-## Install
-
-```sh
-yarn add @bluish/core
-```
-
-```sh
-yarn add -D @bluish/cli
-```
-
-## Usage
-
-### Configuration file
-
-```ts
-// ./bluish.config.ts
-export default {
-  functions: ['./src/functions/*.ts'],
-  application: './src/app'
-}
-```
-
-### Application wrapper
-
-The app is a layer above the trigger itself, with it you can customize the executions that will happen, before or after the trigger is executed.
-
-The use of the app is not mandatory, but it certainly helps in the reuse of features. To disable just remove the `application` property from the configuration file.
-
-```ts
-// ./src/app/index.ts
-
-import { App, OnInitialize, OnDestroy, OnError, ErrorHandler, Context } from '@bluish/core'
-
-@App()
-class Application() {
-  @OnInitialize()
-  public onInitialize(context: Context) {}
-
-  @OnDestroy()
-  public onDestroy(context: Context) {}
-
-  @OnError()
-  public onError(context: Context) {}
-
-  @ErrorHandler()
-  public errorHandler(error: unknown, context: Context) {}
-}
-```
-
-### Trigger
-
-Currently we only support the Http Trigger, but we plan to support all standard azure function triggers.
-
-All examples are created in the pattern that is in the configuration
+The makers of bluish triggers want to make their code as readable as possible!
 
 ### Http
 
+The http trigger can be defined with the `Http` decorator that `@bluish/core` provides.
+
 ```ts
-// ./src/functions/HelloWorld.ts
+import { Http } from '@bluish/core'
 
-import { HttpTrigger } from '@bluish/core'
+export class Users {
+  @Http.Get('/users')
+  public list(
+    @Http.Query() query: unknown.
+  ) {}
 
-class HelloWorld {
-  @HttpTrigger.Get('/hi')
-  public sayHi(
-    @HttpTrigger.Query('name') name?: string
-  ) {
-    if (name) return `Hi, ${name}`
+  @Http.Post('/users')
+  public create(
+    @Http.Body() body: unknown
+  ) {}
 
-    return `Hello, send param name to receive custom hi`
+  @Http.Patch('/users/{userId}')
+  public create(
+    @Http.Param('userId') userId: string,
+    @Http.Body() body: unknown
+  ) {}
+
+  @Http.Delete('/users/{userId}')
+  public create(
+    @Http.Param('userId') userId: string,
+  ) {}
+}
+```
+
+For more details about the template see the [`Http` documentation](./docs/decorators/http.md)
+
+## Events
+
+The events are used to infiltrate the flow of the bluish runner.
+
+### OnInitialize
+
+The initialization hook happens before actually entering your trigger, it helps you create custom validations and parsers.
+
+```ts
+import { OnInitialize, HttpTrigger, HttpContext } from '@bluish/core'
+
+export class Users {
+  @HttpTrigger.Get('/users')
+  @OnInitialize(async (context: HttpContext) => {
+    if (!isAuthorizedToReadUser(context.headers.authorization))
+      throw new UnauthorizedError()
+  })
+  public async list() {}
+}
+```
+
+see the [`OnInitialize` documentation](./docs/decorators/on-initialize.md).
+
+### OnDestroy
+
+Com ele você pode se conectar ao fluxo de destruição do gatilho, útil para limpeza e fechamento de conexões.
+
+```ts
+import { OnInitialize, HttpTrigger } from '@bluish/core'
+
+@OnInitialize(async () => await connection.connect())
+@OnDestroy(async () => await connection.end())
+export class Users {
+  @HttpTrigger.Get('/users')
+  public async list() {}
+}
+```
+
+### OnError
+
+Also with the same polymorphism as `OnInitialize` and `OnDestroy`, on `OnError` is always executed when an error is thrown during initialization and trigger execution. It can also be used for error handling.
+
+```ts
+@OnInitialize((context: HttpContext) => {
+  if (!isAuthorizedToWriteUser(context.headers.authorization))
+    throw new UnauthorizedError()
+})
+@OnError((error: unknown, context: HttpContext) => {
+  if (error instanceof UnauthorizedError)
+    return { status: 400, body: { message: 'unauthorized' } }
+})
+export class Users {
+  @HttpTrigger.Post('/users')
+  public async create() {}
+
+  @HttpTrigger.Patch('/users')
+  public async update() {}
+}
+```
+
+### OnSuccess
+
+Finally the `OnSuccess` call from the context with the generated payload, it works differently from the others because each result of each `OnSuccess` call is analyzed and given as an "official" answer. Example:
+
+```ts
+import { OnSuccess } from '@bluish/core'
+
+export class Users {
+  @OnSuccess(users => ({ status: 200, body: users }))
+  public list() {
+    const users = []
+    return users
   }
 }
 ```
 
-### Plugins
+Basically, you can transform the method's return into a response with other characteristics, or even transform the body's content, in short, it's up to your creativity.
 
-Plugins serve to create an interception model, with which you can use a plugin at any time in your trigger's life flow.
+## Under the hood
 
-Example:
+### Trigger
 
-```ts
-import { Use, App } from '@bluish/core'
-import BluishUrlencodedPlugin from '@bluish/plugin-urlencoded'
+see [`Trigger` documentation](./docs/decorators/trigger.md).
 
-@App()
-@Use(new BluishUrlencodedPlugin())
-class Application {}
-```
+### Context
 
-or
+see [`Context` documentation](./docs/context.md).
+### Runner
 
-```ts
-import { HttpTrigger } from '@bluish/core'
-import BluishUrlencodedPlugin from '@bluish/plugin-urlencoded'
-
-@Plugin(new BluishUrlencodedPlugin()) // here
-export class Something {
-
-  @HttpTrigger.Get('/')
-  @Plugin(new BluishUrlencodedPlugin()) // or here
-  public thing() {
-    return 'ok'
-  }
-}
-```
-
-### Running
-
-```sh
-yarn bluish start
-```
-
-### Building
-
-```sh
-yarn bluish build
-```
-
-#### List of official plugins:
-
-- [@bluish/plugin-urlencoded](./plugins/urlencoded/README.md)
-
-## Under development
-
-Bluish is a tool in alpha, so it can be found a flaw, if you find one please open an issue on our channel.
-
-- Blob trigger support;
-- Event grid trigger support;
-- Event hub trigger support;
-- Queue trigger support;
-- Create bluish app;
-- Better documentation;
-
-## License
-Bluish is [MIT licensed](./LICENSE).
+see [`Runner` documentation](./docs/runner.md).

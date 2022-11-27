@@ -1,4 +1,4 @@
-import { Metadata, Trigger } from '@bluish/core'
+import { Source, TriggerConfiguration } from '@bluish/core'
 import { MODULE_EXPORT_NAME } from '../constants'
 import { Builder } from './Builder'
 import { Configuration } from './Configuration'
@@ -7,7 +7,11 @@ import { TriggerBuilder } from './TriggerBuilder'
 export class TriggerBuilderCollection {
   private readonly _triggerBuilders: TriggerBuilder[] = []
 
-  public static fromTriggers(triggers: Trigger[], builder: Builder, configuration: Configuration) {
+  public static fromTriggers(
+    triggers: TriggerConfiguration[],
+    builder: Builder,
+    configuration: Configuration,
+  ) {
     const triggerBuilderCollection = new TriggerBuilderCollection(builder, configuration)
 
     triggers.forEach((trigger) => {
@@ -19,7 +23,7 @@ export class TriggerBuilderCollection {
 
   constructor(protected builder: Builder, protected configuration: Configuration) {}
 
-  public add(trigger: Trigger) {
+  public add(trigger: TriggerConfiguration) {
     const triggerBuilder = new TriggerBuilder(trigger, this.builder, this.configuration, this)
 
     this._triggerBuilders.push(triggerBuilder)
@@ -31,10 +35,10 @@ export class TriggerBuilderCollection {
     this._triggerBuilders.splice(this._triggerBuilders.indexOf(triggerBuilder), 1)
   }
 
-  public updateByFilePath(trigger: Trigger) {
+  public updateByFilePath(trigger: TriggerConfiguration) {
     const maybeTriggerBuilder = this._triggerBuilders.find(
       (triggerBuilder) =>
-        trigger.metadata.classFilePath === triggerBuilder.trigger.metadata.classFilePath,
+        trigger.source.classFilePath === triggerBuilder.trigger.source.classFilePath,
     )
 
     if (!maybeTriggerBuilder) return this.add(trigger)
@@ -59,7 +63,7 @@ export class TriggerBuilderCollection {
 
   public findByFilePath(filePath: string) {
     return this._triggerBuilders.filter((triggerBuilder) =>
-      filePath.includes(triggerBuilder.trigger.metadata.classFilePath),
+      filePath.includes(triggerBuilder.trigger.source.classFilePath),
     )
   }
 
@@ -79,7 +83,7 @@ export class TriggerBuilderCollection {
         Object.assign(constructor, { [MODULE_EXPORT_NAME]: moduleExportName }),
       )
       .filter((constructor) => typeof constructor === 'function')
-      .flatMap((trigger) => Metadata.load(trigger, true).triggers.toArray())
+      .flatMap((trigger) => Source.get(trigger)?.triggers.toArray())
       .filter(<T>(item: T): item is Exclude<T, undefined> => !!item)
       .map((trigger) => this.add(trigger))
   }

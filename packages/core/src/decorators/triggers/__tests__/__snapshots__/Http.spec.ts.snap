@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Http .Header add a header on the trigger result 1`] = `
+{
+  "body": undefined,
+  "headers": {
+    "Content-Type": "application/json",
+  },
+  "status": undefined,
+}
+`;
+
+exports[`Http .Status add a status to the requisition 1`] = `
+{
+  "body": undefined,
+  "headers": {},
+  "status": 201,
+}
+`;
+
+exports[`Http create a trigger with Connect 1`] = `
+{
+  "body": "Connect",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Delete 1`] = `
+{
+  "body": "Delete",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Get 1`] = `
+{
+  "body": "Get",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Head 1`] = `
+{
+  "body": "Head",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Options 1`] = `
+{
+  "body": "Options",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Patch 1`] = `
+{
+  "body": "Patch",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Post 1`] = `
+{
+  "body": "Post",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Put 1`] = `
+{
+  "body": "Put",
+  "headers": {},
+  "status": undefined,
+}
+`;
+
+exports[`Http create a trigger with Trace 1`] = `
+{
+  "body": "Trace",
+  "headers": {},
+  "status": undefined,
+}
+`;

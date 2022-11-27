@@ -3,7 +3,7 @@ import { Trigger } from '../triggers/Trigger'
 import { run } from '../../test-utils/run'
 import { Use } from '../Use'
 import { Plugin } from '../../models/Plugin'
-import { MockContext } from '../../test-utils/MockContext'
+import { TestingContext } from '../../test-utils/TestingContext'
 
 describe('Use', () => {
   describe('called as trigger decorator', () => {
@@ -13,14 +13,14 @@ describe('Use', () => {
           public onInitialize = jest.fn()
         },
         (plugin: Plugin): Plugin['onInitialize'] => plugin.onInitialize,
-        [expect.any(MockContext)],
+        [expect.any(TestingContext)],
       ],
       [
         class PluginOnDestroy extends Plugin {
           public onDestroy = jest.fn()
         },
         (plugin: Plugin): Plugin['onDestroy'] => plugin.onDestroy,
-        [expect.any(MockContext)],
+        [expect.any(TestingContext)],
       ],
       [
         class PluginOnError extends Plugin {
@@ -31,13 +31,13 @@ describe('Use', () => {
           }
         },
         (plugin: Plugin): Plugin['onError'] => plugin.onError,
-        [expect.any(Error), expect.any(MockContext)],
+        [expect.any(Error), expect.any(TestingContext)],
       ],
     ])('%p', async (TestingPlugin, getFn, args) => {
       const plugin = new TestingPlugin()
 
       class UseTest {
-        @Trigger({ Context: MockContext })
+        @Trigger({ Context: TestingContext })
         @Use(plugin)
         public run = () => ({})
       }
@@ -55,14 +55,14 @@ describe('Use', () => {
           public onInitialize = jest.fn()
         },
         (plugin: Plugin): Plugin['onInitialize'] => plugin.onInitialize,
-        [expect.any(MockContext)],
+        [expect.any(TestingContext)],
       ],
       [
         class PluginOnDestroy extends Plugin {
           public onDestroy = jest.fn()
         },
         (plugin: Plugin): Plugin['onDestroy'] => plugin.onDestroy,
-        [expect.any(MockContext)],
+        [expect.any(TestingContext)],
       ],
       [
         class PluginOnError extends Plugin {
@@ -73,14 +73,14 @@ describe('Use', () => {
           }
         },
         (plugin: Plugin): Plugin['onError'] => plugin.onError,
-        [expect.any(Error), expect.any(MockContext)],
+        [expect.any(Error), expect.any(TestingContext)],
       ],
     ])('%p', async (TestingPlugin, getFn, args) => {
       const plugin = new TestingPlugin()
 
       @Use(plugin)
       class UseTest {
-        @Trigger({ Context: MockContext })
+        @Trigger({ Context: TestingContext })
         public run = () => ({})
       }
 

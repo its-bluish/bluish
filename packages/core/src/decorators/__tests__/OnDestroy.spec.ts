@@ -3,20 +3,20 @@ import { Trigger } from '../triggers/Trigger'
 import { run } from '../../test-utils/run'
 import { OnDestroy } from '../OnDestroy'
 import { Context } from '../../models/contexts/Context'
-import { MockContext } from '../../test-utils/MockContext'
+import { TestingContext } from '../../test-utils/TestingContext'
 
 describe('OnDestroy', () => {
   it('called as trigger decorator', async () => {
     const onDestroy = jest.fn()
     class OnDestroyTest {
-      @Trigger({ Context: MockContext })
+      @Trigger({ Context: TestingContext })
       @OnDestroy(onDestroy)
       public run = () => ({})
     }
 
     await run(new Runner(OnDestroyTest, 'run'))
 
-    expect(onDestroy).toHaveBeenCalledWith(expect.any(MockContext))
+    expect(onDestroy).toHaveBeenCalledWith(expect.any(TestingContext))
   })
 
   it('called as class decorator', async () => {
@@ -24,20 +24,20 @@ describe('OnDestroy', () => {
 
     @OnDestroy(onDestroy)
     class OnDestroyTest {
-      @Trigger({ Context: MockContext })
+      @Trigger({ Context: TestingContext })
       public run = () => ({})
     }
 
     await run(new Runner(OnDestroyTest, 'run'))
 
-    expect(onDestroy).toHaveBeenCalledWith(expect.any(MockContext))
+    expect(onDestroy).toHaveBeenCalledWith(expect.any(TestingContext))
   })
 
   it('called as a decorator of a property other than the trigger', async () => {
     const onDestroy = jest.fn()
 
     class OnDestroyTest {
-      @Trigger({ Context: MockContext })
+      @Trigger({ Context: TestingContext })
       public run = () => ({})
 
       @OnDestroy()
@@ -48,6 +48,6 @@ describe('OnDestroy', () => {
 
     await run(new Runner(OnDestroyTest, 'run'))
 
-    expect(onDestroy).toHaveBeenCalledWith(expect.any(MockContext))
+    expect(onDestroy).toHaveBeenCalledWith(expect.any(TestingContext))
   })
 })

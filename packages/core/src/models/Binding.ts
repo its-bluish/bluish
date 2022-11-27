@@ -1,7 +1,7 @@
-import { Trigger } from './Trigger'
+import { TriggerConfiguration } from './TriggerConfiguration'
 
 export class Binding {
-  public trigger!: Trigger
+  public trigger!: TriggerConfiguration
 
   constructor(
     public type: string,

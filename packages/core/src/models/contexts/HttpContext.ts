@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable object-shorthand */
 import { Context, AzureFunctionContext } from './Context'
 import { HttpRequest } from '@azure/functions'
 import { PromiseToo } from '../../typings/PromiseToo'
@@ -13,6 +16,11 @@ export interface HttpTemplate {
   params: Record<string, unknown>
   body: unknown
 }
+
+interface Response {
+  status?: number
+  headers: Record<string, string>
+}
 export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
   public method: HttpMethod
   public url: string
@@ -21,6 +29,9 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
   public params: HttpTemplate['params'] & T['params']
   public body: T['body']
   public rawBody: unknown
+  protected response: Response = {
+    headers: {},
+  }
 
   constructor(context: AzureFunctionContext, public azureFunctionRequest: HttpRequest) {
     super(context)
@@ -39,22 +50,53 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
     this.rawBody = azureFunctionRequest.rawBody
   }
 
-  public success(body: unknown): PromiseToo<unknown> {
-    if (!body) return { body }
+  public success(payload: unknown): PromiseToo<unknown> {
+    const { status, headers } = this.response
 
-    if (typeof body !== 'object') return { body }
+    if (!payload) return { status, headers, body: payload }
 
-    if ('status' in body && 'body' in body) return body
+    if (typeof payload !== 'object') return { status, headers, body: payload }
 
-    return { body }
+    if ('status' in payload && 'body' in payload) {
+      return {
+        // @ts-ignore
+        status: payload.status,
+        // @ts-ignore
+        body: payload.body,
+        headers: {
+          ...headers,
+          // @ts-ignore
+          ...('headers' in payload && typeof payload.headers === 'object' && payload.headers),
+        },
+      }
+    }
+
+    return { body: payload }
   }
 
   public unhandledError(error: unknown): PromiseToo<unknown> {
     throw error
   }
 
-  public handledError(data: unknown): PromiseToo<unknown> {
-    return this.success(data)
+  public handledError(payload: unknown): PromiseToo<unknown> {
+    return this.success(payload)
+  }
+
+  public status(): number
+  public status(status: number): this
+  public status(status?: number) {
+    if (status === void 0) return this.response.status
+
+    this.response.status = status
+
+    return this
+  }
+
+  public setHeader(name: string, value: string): this
+  public setHeader(name: string, value: string) {
+    this.response.headers[name] = value
+
+    return this
   }
 }
 
@@ -64,8 +106,7 @@ export interface HttpContext<T extends Partial<HttpTemplate> = {}>
 
 declare global {
   export namespace Bluish {
-    export interface HttpContext<T extends Partial<HttpTemplate>> {
-      __httpTemplate__: T
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    export interface HttpContext<T extends Partial<HttpTemplate>> {}
   }
 }

@@ -1,6 +1,10 @@
 export class Collection<T> implements Iterable<T> {
   private _array: T[] = []
 
+  protected get array(): readonly T[] {
+    return this._array
+  }
+
   public push(item: T): T
   public push(...items: T[]): T[]
   public push(...items: T[]): T | T[] {

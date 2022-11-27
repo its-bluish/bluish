@@ -1,21 +1,20 @@
 /* eslint-disable no-await-in-loop */
-import { Trigger } from './metadata/Trigger'
-import { ApplicationMetadata } from './metadata/Application'
-import { Hook } from './metadata/Hook'
+import { TriggerConfiguration } from './TriggerConfiguration'
+import { ApplicationConfiguration } from './ApplicationConfiguration'
+import { Hook } from './Hook'
 import { AzureFunctionContext, Context } from './contexts/Context'
-import { Metadata } from './metadata'
-import { wait } from '../tools/wait'
+import { Source } from './Source'
 import { Fn } from '../typings/helpers'
 
 export class Runner<P extends string, T extends Record<P, Fn>> {
   public instance!: Record<P, Fn> & Record<string, unknown>
   public application: Record<string, unknown>
-  public applicationMetadata: ApplicationMetadata
-  public trigger: Trigger
-  public metadata: Metadata
+  public applicationConfiguration: ApplicationConfiguration
+  public triggerConfiguration: TriggerConfiguration
+  public source: Source
 
   constructor(
-    public TargetConstructor: new () => T,
+    public RootConstructor: new () => T,
     public property: P,
     public Application: (new () => unknown) | null = null,
   ) {
@@ -25,13 +24,13 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
 
     this.application = application as Record<string, unknown>
 
-    this.applicationMetadata = ApplicationMetadata.set(Application)
+    this.applicationConfiguration = ApplicationConfiguration.set(Application)
 
-    this.metadata = Metadata.loadOrFail(TargetConstructor)
+    this.source = Source.getOrFail(RootConstructor)
 
-    this.trigger = this.metadata.triggers.findOneByPropertyOrFail(property)
+    this.triggerConfiguration = this.source.triggers.findOneByPropertyOrFail(property)
 
-    const instance = new TargetConstructor()
+    const instance = new RootConstructor()
 
     if (typeof instance !== 'object') throw new Error('TODO')
 
@@ -40,12 +39,8 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
     this.instance = instance as Record<P, Fn> & Record<string, unknown>
   }
 
-  protected get plugins() {
-    return [...this.applicationMetadata.plugins, ...this.metadata.plugins, ...this.trigger.plugins]
-  }
-
   public async run(context: Context) {
-    const args = await this.trigger.args.toArguments(context)
+    const args = await this.triggerConfiguration.args.toArguments(context)
 
     if (!(this.property in this.instance)) throw new Error('TODO')
 
@@ -62,54 +57,77 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
     return (target[hook.call] as Fn)(...args)
   }
 
-  private async _hooks(event: string, ...args: unknown[]) {
-    for (const hook of this.applicationMetadata.hooks.findByEvent(event))
-      await this.constructor._hook(this.application, hook, ...args)
-
-    for (const hook of this.metadata.hooks.findByEvent(event))
-      await this.constructor._hook(this.instance, hook, ...args)
-
-    for (const hook of this.trigger.hooks.findByEvent(event))
-      await this.constructor._hook({}, hook, ...args)
-  }
-
   private async _initialize(context: Context) {
     await context.initialize?.()
 
-    for (const plugin of this.plugins) await plugin.onInitialize?.(context)
+    for (const plugin of this.applicationConfiguration.plugins) await plugin.onInitialize?.(context)
 
-    await this._hooks('initialize', context)
+    for (const hook of this.applicationConfiguration.hooks.findByEvent('initialize'))
+      await this.constructor._hook(this.application, hook, context)
+
+    for (const plugin of this.source.plugins) await plugin.onInitialize?.(context)
+
+    for (const hook of this.source.hooks.findByEvent('initialize'))
+      await this.constructor._hook(this.instance, hook, context)
+
+    for (const plugin of this.triggerConfiguration.plugins) await plugin.onInitialize?.(context)
+
+    for (const hook of this.triggerConfiguration.hooks.findByEvent('initialize'))
+      await this.constructor._hook({}, hook, context)
   }
 
   private async _destroy(context: Context) {
-    for (const plugin of this.plugins) await plugin.onDestroy?.(context)
+    for (const hook of this.triggerConfiguration.hooks.findByEvent('destroy'))
+      await this.constructor._hook({}, hook, context)
 
-    await this._hooks('destroy', context)
+    for (const plugin of this.triggerConfiguration.plugins) await plugin.onDestroy?.(context)
+
+    for (const hook of this.source.hooks.findByEvent('destroy'))
+      await this.constructor._hook(this.instance, hook, context)
+
+    for (const plugin of this.source.plugins) await plugin.onDestroy?.(context)
+
+    for (const hook of this.applicationConfiguration.hooks.findByEvent('destroy'))
+      await this.constructor._hook(this.application, hook, context)
+
+    for (const plugin of this.applicationConfiguration.plugins) await plugin.onDestroy?.(context)
 
     await context.destroy?.()
   }
 
   private async _error(error: unknown, context: Context) {
-    for (const plugin of this.plugins) await plugin.onError?.(error, context)
-
-    await this._hooks('error', error, context)
-  }
-
-  private async _handleError(error: unknown, context: Context) {
-    for (const hook of this.trigger.hooks.findByEvent('error-handler')) {
+    for (const hook of this.triggerConfiguration.hooks.findByEvent('error')) {
       const data = await this.constructor._hook({}, hook, error, context)
 
       if (data !== void 0) return data
     }
 
-    for (const hook of this.metadata.hooks.findByEvent('error-handler')) {
+    for (const plugin of this.triggerConfiguration.plugins) {
+      const data = await plugin.onError?.(error, context)
+
+      if (data !== void 0) return data
+    }
+
+    for (const hook of this.source.hooks.findByEvent('error')) {
       const data = await this.constructor._hook(this.instance, hook, error, context)
 
       if (data !== void 0) return data
     }
 
-    for (const hook of this.applicationMetadata.hooks.findByEvent('error-handler')) {
+    for (const plugin of this.source.plugins) {
+      const data = await plugin.onError?.(error, context)
+
+      if (data !== void 0) return data
+    }
+
+    for (const hook of this.applicationConfiguration.hooks.findByEvent('error')) {
       const data = await this.constructor._hook(this.application, hook, error, context)
+
+      if (data !== void 0) return data
+    }
+
+    for (const plugin of this.applicationConfiguration.plugins) {
+      const data = await plugin.onError?.(error, context)
 
       if (data !== void 0) return data
     }
@@ -117,27 +135,51 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
     return null
   }
 
-  private async _transform(initialData: unknown, context: Context) {
+  private async _success(initialData: unknown, context: Context) {
     let data: unknown = initialData
 
-    data = await this.plugins.reduce(
-      async (current, plugin) => (await plugin.transform?.(await current, context)) ?? current,
-      Promise.resolve(data),
-    )
+    data = await this.triggerConfiguration.hooks
+      .findByEvent('success')
+      .reduce(
+        async (current, hook) =>
+          (await this.constructor._hook({}, hook, await current, context)) ?? current,
+        Promise.resolve(data),
+      )
 
-    data = await this.metadata.hooks
-      .findByEvent('transform')
+    data = await this.triggerConfiguration.plugins
+      .toArray()
+      .reduce(
+        async (current, plugin) => (await plugin.onSuccess?.(await current, context)) ?? current,
+        Promise.resolve(data),
+      )
+
+    data = await this.source.hooks
+      .findByEvent('success')
       .reduce(
         async (current, hook) =>
           (await this.constructor._hook(this.instance, hook, await current, context)) ?? current,
         Promise.resolve(data),
       )
 
-    data = await this.trigger.hooks
-      .findByEvent('transform')
+    data = await this.source.plugins
+      .toArray()
+      .reduce(
+        async (current, plugin) => (await plugin.onSuccess?.(await current, context)) ?? current,
+        Promise.resolve(data),
+      )
+
+    data = await this.applicationConfiguration.hooks
+      .findByEvent('success')
       .reduce(
         async (current, hook) =>
-          (await this.constructor._hook({}, hook, await current, context)) ?? current,
+          (await this.constructor._hook(this.application, hook, await current, context)) ?? current,
+        Promise.resolve(data),
+      )
+
+    data = await this.applicationConfiguration.plugins
+      .toArray()
+      .reduce(
+        async (current, plugin) => (await plugin.onSuccess?.(await current, context)) ?? current,
         Promise.resolve(data),
       )
 
@@ -145,24 +187,23 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
   }
 
   private async _run(azureFunctionContext: AzureFunctionContext, ...args: unknown[]) {
-    await wait.cleaning()
-
-    const context = Object.assign(new this.trigger.Context(azureFunctionContext, ...args), {
-      runner: this,
-    })
+    const context = Object.assign(
+      new this.triggerConfiguration.Context(azureFunctionContext, ...args),
+      {
+        runner: this,
+      },
+    )
 
     try {
       await this._initialize(context)
 
-      const data = await this._transform(await this.run(context), context)
+      const data = await this._success(await this.run(context), context)
 
       const response = await context.success(data)
 
       return response
     } catch (error) {
-      await this._error(error, context)
-
-      const maybeHandleErrorPayload = await this._handleError(error, context)
+      const maybeHandleErrorPayload = await this._error(error, context)
 
       if (maybeHandleErrorPayload !== null) {
         const response = await context.handledError(maybeHandleErrorPayload)

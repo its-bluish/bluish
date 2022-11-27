@@ -1,4 +1,4 @@
-import { App, Use, OnInitialize, Context, OnDestroy, OnError, ErrorHandler } from "@bluish/core";
+import { App, Use, OnInitialize, Context, OnDestroy, OnError } from "@bluish/core";
 import { database } from "../services/database";
 import * as Yup from 'yup'
 import BluishUrlencodedPlugin from '@bluish/plugin-urlencoded'
@@ -16,10 +16,7 @@ class Application {
   public async onDestroy(context: Context) {}
 
   @OnError()
-  public onError(error: unknown, context: Context) {}
-
-  @ErrorHandler()
-  public errorHandler(error: unknown) {
+  public onError(error: unknown, context: Context) {
     if (typeof error !== 'object') return void 0
 
     if (error instanceof Yup.ValidationError)

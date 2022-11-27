@@ -1,5 +1,5 @@
 import { Runner } from '../../models/Runner'
-import { MockContext } from '../../test-utils/MockContext'
+import { TestingContext } from '../../test-utils/TestingContext'
 import { run } from '../../test-utils/run'
 import { App } from '../App'
 import { OnInitialize } from '../OnInitialize'
@@ -16,7 +16,7 @@ describe('App', () => {
       }
 
       class TriggerTest {
-        @Trigger({ Context: MockContext })
+        @Trigger({ Context: TestingContext })
         public run() {
           return 'Ok'
         }

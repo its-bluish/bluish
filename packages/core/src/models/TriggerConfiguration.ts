@@ -1,11 +1,11 @@
 import { BindingCollection } from './BindingCollection'
-import { Metadata } from '.'
+import { Source } from './Source'
 import { HookCollection } from './HookCollection'
 import { PluginCollection } from './PluginCollection'
-import { Context as ContextClass } from '../contexts/Context'
+import { Context as ContextClass } from './contexts/Context'
 import { ArgCollection } from './ArgCollection'
 
-export class Trigger {
+export class TriggerConfiguration {
   public bindings = new BindingCollection(this)
 
   public args = new ArgCollection(this)
@@ -14,9 +14,9 @@ export class Trigger {
 
   public plugins = new PluginCollection()
 
-  public metadata!: Metadata
+  public source!: Source
 
-  public runner = 'core'
+  public runner = '@bluish/core'
 
   constructor(
     public Context: new (...args: any[]) => ContextClass,

@@ -1,4 +1,5 @@
-import { ApplicationMetadata } from '@bluish/core'
+/* eslint-disable max-lines-per-function */
+import { ApplicationConfiguration } from '@bluish/core'
 import path from 'path'
 import { Configuration as IConfiguration } from '../interfaces/Configuration'
 import { exists } from '../tools/exists'
@@ -40,12 +41,12 @@ export class DevServer {
       })
   }
 
-  private async getApplication(bluishConfiguration: IConfiguration) {
+  private async getApplicationConfiguration(bluishConfiguration: IConfiguration) {
     const { input } = this.options
 
     return _import<Function>(
       bluishConfiguration.application && path.join(input, bluishConfiguration.application),
-    ).then((app) => ApplicationMetadata.set(app))
+    ).then((app) => ApplicationConfiguration.set(app))
   }
 
   public async start() {
@@ -55,16 +56,19 @@ export class DevServer {
 
     const configuration = new Configuration({ input, output }, bluishConfiguration)
 
-    const application = await this.getApplication(bluishConfiguration)
+    const applicationConfiguration = await this.getApplicationConfiguration(bluishConfiguration)
 
-    application.host.set({ version: '2.0' })
+    applicationConfiguration.host.set({ version: '2.0' })
 
     const { default: TypescriptBuilder } = await import('../builders/typescript')
 
     const builder = new TypescriptBuilder(input, output)
     const triggersBuilder = new TriggersBuilder(builder, configuration)
 
-    await fs.writeFile(path.join(output, 'host.json'), JSON.stringify(application.host, null, 2))
+    await fs.writeFile(
+      path.join(output, 'host.json'),
+      JSON.stringify(applicationConfiguration.host, null, 2),
+    )
 
     const watchers = {
       builder: builder.watch(),

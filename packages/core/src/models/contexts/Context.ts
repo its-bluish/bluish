@@ -10,11 +10,11 @@ export abstract class Context {
 
   constructor(public azureFunctionContext: AzureFunctionContext) {}
 
-  public abstract success(data: unknown): PromiseToo<unknown>
+  public abstract success(payload: unknown): PromiseToo<unknown>
 
   public abstract unhandledError(error: unknown): PromiseToo<unknown>
 
-  public abstract handledError(data: unknown): PromiseToo<unknown>
+  public abstract handledError(payload: unknown): PromiseToo<unknown>
 
   public initialize?(): PromiseToo<void>
 

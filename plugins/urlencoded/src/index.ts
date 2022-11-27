@@ -1,5 +1,4 @@
 import { Context, HttpContext, Plugin } from '@bluish/core'
-import { HttpTemplate } from '@bluish/core/dist/models/contexts/HttpContext'
 import { is } from 'type-is'
 
 export interface BluishUrlencodedPluginOptions {
@@ -14,9 +13,7 @@ export default class BluishUrlencodedPlugin extends Plugin {
     this.extended = extended
   }
 
-  public static isContentTypeFormUrlencoded<T extends Partial<HttpTemplate>>(
-    context: HttpContext<T>,
-  ): string | false {
+  public static isContentTypeFormUrlencoded(context: HttpContext): string | false {
     return is(context.headers['content-type'], 'application/x-www-form-urlencoded')
   }
 
@@ -39,7 +36,7 @@ export default class BluishUrlencodedPlugin extends Plugin {
 
     if (!(context instanceof HttpContext)) return void 0
 
-    if (BluishUrlencodedPlugin.isContentTypeFormUrlencoded(context)) {
+    if (BluishUrlencodedPlugin.isContentTypeFormUrlencoded(context as HttpContext)) {
       const body = parser.parse(context.rawBody)
 
       Object.assign(context, { body })
