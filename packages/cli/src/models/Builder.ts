@@ -5,5 +5,7 @@ export abstract class Builder {
 
   public abstract build(): Promise<void> | void
 
-  public abstract watch(): Promise<() => void> | (() => void)
+  public abstract stopWatch(): Promise<void> | void
+
+  public abstract startWatch(): Promise<void> | void
 }

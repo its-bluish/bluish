@@ -10,18 +10,22 @@ export interface ChokidarWatcherEvents {
 }
 
 export class ChokidarWatcher extends Emitter<ChokidarWatcherEvents> {
-  private readonly _watcher: chokidar.FSWatcher
+  private _watcher: chokidar.FSWatcher | null = null
   private readonly _changeTimeout = new Map<string, NodeJS.Timeout>()
 
-  constructor(paths: string | readonly string[], options?: chokidar.WatchOptions) {
+  constructor(public paths: string | readonly string[], public options?: chokidar.WatchOptions) {
     super()
+  }
 
-    this._watcher = chokidar.watch(paths, options)
+  public start() {
+    this._watcher = chokidar.watch(this.paths, this.options)
 
     this._watcher.on('change', (path) => this._change(path))
+
     this._watcher.on('add', (path) => {
       this.emit('add', path)
     })
+
     this._watcher.on('unlink', (path) => {
       this.emit('unlink', path)
     })
@@ -41,6 +45,8 @@ export class ChokidarWatcher extends Emitter<ChokidarWatcherEvents> {
   }
 
   public async close() {
+    if (!this._watcher) throw new Error('TODO')
+
     await this._watcher.close()
   }
 }

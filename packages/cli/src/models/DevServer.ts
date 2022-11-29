@@ -1,35 +1,53 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
+/* eslint-disable object-shorthand */
 /* eslint-disable max-lines-per-function */
 import { ApplicationConfiguration } from '@bluish/core'
 import path from 'path'
 import { Configuration as IConfiguration } from '../interfaces/Configuration'
-import { exists } from '../tools/exists'
 import { TriggerBuilderCollection as TriggersBuilder } from './TriggerBuilderCollection'
-import { AzureFuncSpawn } from './AzureFuncSpawn'
+import { AzureServer } from './AzureServer'
 import fs from 'fs/promises'
 import { Configuration } from './Configuration'
 import { _import } from '../tools/_import'
 import { ChokidarWatcher } from './ChokidarWatcher'
+import TypescriptBuilder from '../builders/typescript'
 
 export interface DevServerOptions {
   input: string
-  config: string
   port: number
   output: string
+  configuration: IConfiguration
 }
 
 export class DevServer {
-  public bluishConfigurationPath: string
-
-  private _kill: null | (() => Promise<void>) = null
+  public azureServer: AzureServer
+  public builder: TypescriptBuilder
+  public triggersBuilder: TriggersBuilder
+  public configuration: Configuration
+  public functionsWatcher: ChokidarWatcher
 
   constructor(public options: DevServerOptions) {
-    this.bluishConfigurationPath = path.resolve(this.options.input, this.options.config)
-  }
+    const { input, output, port } = this.options
 
-  protected async getBluishConfiguration() {
-    if (!(await exists(this.bluishConfigurationPath))) throw new Error('')
+    const bluishConfiguration = this.options.configuration
 
-    return _import<IConfiguration>(this.bluishConfigurationPath)
+    this.configuration = new Configuration({ input, output }, bluishConfiguration)
+
+    this.azureServer = new AzureServer(
+      { port },
+      {
+        asleep: true,
+        cwd: output,
+        stdio: [process.stdin, process.stdout, process.stderr, 'pipe'],
+      },
+    )
+    this.builder = new TypescriptBuilder(input, output)
+
+    this.triggersBuilder = new TriggersBuilder(this.builder, this.configuration)
+
+    this.functionsWatcher = new ChokidarWatcher(this.options.configuration.functions, {
+      cwd: input,
+    })
   }
 
   protected clearInputModules() {
@@ -50,62 +68,49 @@ export class DevServer {
   }
 
   public async start() {
-    const { input, output, port } = this.options
+    const { input, output } = this.options
 
-    const bluishConfiguration = await this.getBluishConfiguration()
-
-    const configuration = new Configuration({ input, output }, bluishConfiguration)
-
-    const applicationConfiguration = await this.getApplicationConfiguration(bluishConfiguration)
-
-    applicationConfiguration.host.set({ version: '2.0' })
-
-    const { default: TypescriptBuilder } = await import('../builders/typescript')
-
-    const builder = new TypescriptBuilder(input, output)
-    const triggersBuilder = new TriggersBuilder(builder, configuration)
+    const applicationConfiguration = await this.getApplicationConfiguration(
+      this.options.configuration,
+    )
 
     await fs.writeFile(
       path.join(output, 'host.json'),
-      JSON.stringify(applicationConfiguration.host, null, 2),
+      JSON.stringify(applicationConfiguration.host.set({ version: '2.0' }), null, 2),
     )
 
-    const watchers = {
-      builder: builder.watch(),
-      functions: new ChokidarWatcher(bluishConfiguration.functions, { cwd: input }),
-    }
-    watchers.functions.on('change', () => {
+    this.builder.startWatch()
+
+    this.functionsWatcher.on('change', () => {
       this.clearInputModules()
     })
-    watchers.functions.on('add', async (filepath) => {
+
+    this.functionsWatcher.on('add', async (filepath) => {
       const module = await _import<Record<string, Function>>(path.join(input, filepath))
 
-      await triggersBuilder.addByModuleExportAndBuild(module)
+      await this.triggersBuilder.addByModuleExportAndBuild(module)
     })
-    watchers.functions.on('change', async (filepath) => {
+
+    this.functionsWatcher.on('change', async (filepath) => {
       const module = await _import<Record<string, Function>>(path.join(input, filepath))
 
-      await triggersBuilder.removeByFilePath(path.join(input, filepath))
+      await this.triggersBuilder.removeByFilePath(path.join(input, filepath))
 
-      await triggersBuilder.addByModuleExportAndBuild(module)
-    })
-    watchers.functions.on('unlink', async (filepath) => {
-      await triggersBuilder.removeByFilePath(path.join(input, filepath))
+      await this.triggersBuilder.addByModuleExportAndBuild(module)
     })
 
-    const fork = new AzureFuncSpawn('start', { cwd: output, flags: { port }, stdio: true })
+    this.functionsWatcher.on('unlink', async (filepath) => {
+      await this.triggersBuilder.removeByFilePath(path.join(input, filepath))
+    })
 
-    this._kill = async () => {
-      fork.kill()
-      watchers.builder()
-      await watchers.functions.close()
-      await fs.rm(output, { force: true, recursive: true })
-    }
+    this.functionsWatcher.start()
+
+    this.azureServer.toWakeUp()
   }
 
-  public async kill() {
-    await this._kill?.()
-
-    this._kill = null
+  public async close() {
+    await this.azureServer.kill()
+    this.builder.stopWatch()
+    await this.functionsWatcher.close()
   }
 }

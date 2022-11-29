@@ -1,4 +1,4 @@
-import { Http, Use } from '@bluish/core'
+import { Http, Use, Timer } from '@bluish/core'
 
 import { User } from '../entities/User'
 import { Schema } from '../handlers/Schema'
@@ -8,7 +8,6 @@ import { userCreateSchema } from '../schemas/userCreate'
 import { userCreateOrUpdateSchema } from '../schemas/userCreateOrUpdate'
 import { DeepPartial } from 'typeorm'
 import BluishUrlencodedPlugin from '@bluish/plugin-urlencoded'
-
 @Use(new BluishUrlencodedPlugin({ extended: false }))
 export class Users {
   @Http.Get('/users')
@@ -22,7 +21,6 @@ export class Users {
     @Http.Query('take') take: number,
     @Http.Query('page') page: number,
   ) {
-    console.log({ take, page })
     const skip = take * (page - 1)
 
     const [users, count] = await User.findAndCount({ take, skip })
@@ -62,5 +60,10 @@ export class Users {
   @UseEntity(User, 'user')
   public async remove(@Http.Param('user') user: User) {
     await user.remove()
+  }
+
+  @Timer('0 */1 * * * *')
+  public async timer() {
+    console.log(new Date().toISOString())
   }
 }

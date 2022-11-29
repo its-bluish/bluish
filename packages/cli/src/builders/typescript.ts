@@ -19,6 +19,8 @@ interface SemiTsConfig {
 }
 
 export default class TypescriptBuilder extends Builder {
+  public program: ts.WatchOfConfigFile<ts.SemanticDiagnosticsBuilderProgram> | null = null
+
   public getTsConfigPath() {
     const configFilePath = ts.findConfigFile(this.rootDir, ts.sys.fileExists.bind(ts.sys))
 
@@ -71,7 +73,13 @@ export default class TypescriptBuilder extends Builder {
     await fs.copyFile(path.join(tmp, 'tsconfig.json'), tsConfigPath)
   }
 
-  public watch() {
+  public stopWatch() {
+    if (!this.program) throw new Error('TODO')
+
+    this.program.close()
+  }
+
+  public startWatch() {
     const tsConfigPath = ts.findConfigFile(this.rootDir, ts.sys.fileExists.bind(ts.sys))
 
     if (!tsConfigPath) throw new Error("Could not find a valid 'tsconfig.json'.")
@@ -96,10 +104,6 @@ export default class TypescriptBuilder extends Builder {
       () => void 0,
     )
 
-    const program = ts.createWatchProgram(host)
-
-    return () => {
-      program.close()
-    }
+    this.program = ts.createWatchProgram(host)
   }
 }

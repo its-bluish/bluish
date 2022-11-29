@@ -71,7 +71,7 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
       }
     }
 
-    return { body: payload }
+    return { status, headers, body: payload }
   }
 
   public unhandledError(error: unknown): PromiseToo<unknown> {

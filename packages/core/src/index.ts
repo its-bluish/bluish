@@ -24,3 +24,6 @@ export { HttpContext, AzureHttpRequest } from './models/contexts/HttpContext'
 
 export { waitForSourceOrApplicationConfiguration } from './tools/waitForSourceOrApplicationConfiguration'
 export { waitForTriggerConfiguration } from './tools/waitForTriggerConfiguration'
+
+export { Timer, TimerOptions } from './decorators/triggers/Timer'
+export { TimerContext } from './models/contexts/TimerContext'

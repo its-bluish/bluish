@@ -1,5 +1,13 @@
 # Bluish Core
 
+Bluish is a framework for creating azure function triggers programmatically through typescript with decorators.
+
+It helps to write azure trigger functions directly in your class, without the need for auxiliary files and gives you autonomy to create interceptors to help and focus specifically on what the function has to deliver.
+
+## Getting started
+
+To start using bluish read the repositor [README](../../README.md).
+
 ## Triggers
 
 The makers of bluish triggers want to make their code as readable as possible!
