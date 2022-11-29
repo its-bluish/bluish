@@ -40,7 +40,7 @@ export class Spawn extends Emitter<SpawnEvents> implements PromiseLike<void> {
     return Object.entries(args).reduce<string[]>((flags, [key, value]) => {
       const flag = key.length === 1 ? `-${key}` : `--${key}`
 
-      if (typeof value === 'string') return flags.concat([flag, `"${value}"`])
+      if (typeof value === 'string') return flags.concat([flag, value])
 
       if (typeof value === 'boolean' && value) return flags.concat([flag])
 

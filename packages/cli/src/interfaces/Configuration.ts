@@ -6,7 +6,7 @@ export interface Configuration {
 
 export type ConfigurationAzurite =
   | boolean
-  | Record<AzuriteServers, boolean | ConfigurationAzuriteServer>
+  | Record<AzuriteServices, boolean | ConfigurationAzuriteServer>
 
 export interface ConfigurationAzuriteServer {
   host?: string
@@ -14,4 +14,4 @@ export interface ConfigurationAzuriteServer {
   start?: boolean
 }
 
-export type AzuriteServers = 'blob' | 'queue' | 'table'
+export type AzuriteServices = 'blob' | 'queue' | 'table'

@@ -7,6 +7,8 @@ import { start } from '../commands/start'
 import fs from 'fs/promises'
 import path from 'path'
 
+program.name('bluish')
+
 program.addCommand(build)
 program.addCommand(start)
 program.addCommand(install)
