@@ -6,7 +6,7 @@ export interface Configuration {
 
 export type ConfigurationAzurite =
   | boolean
-  | Record<AzuriteServices, boolean | ConfigurationAzuriteServer>
+  | Partial<Record<AzuriteServices, boolean | ConfigurationAzuriteServer>>
 
 export interface ConfigurationAzuriteServer {
   host?: string

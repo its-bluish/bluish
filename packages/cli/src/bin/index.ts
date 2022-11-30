@@ -6,12 +6,14 @@ import { install } from '../commands/install'
 import { start } from '../commands/start'
 import fs from 'fs/promises'
 import path from 'path'
+import { init } from '../commands/init'
 
 program.name('bluish')
 
 program.addCommand(build)
 program.addCommand(start)
 program.addCommand(install)
+program.addCommand(init)
 
 void (async () => {
   const { version } = JSON.parse(
