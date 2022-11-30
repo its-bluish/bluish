@@ -38,16 +38,36 @@ To run your code bluish uses typescript as interpreter, so configure your typesc
 
 To start using bluish you need to create a configuration file called `bluish.config.ts` in it you will have two configurations.
 
-|property  |type                 |required |description            |
-|----------|---------------------|---------|-----------------------|
-|functions |`string \| string[]` |true     |trigger class paths    |
-|app       |`string`             |false    |application class path |
+|property  |type                             |required |description            |
+|----------|---------------------------------|---------|-----------------------|
+|functions |`string \| string[]`             |false    |trigger class paths    |
+|app       |`string`                         |false    |application class path |
+|azurite   |`boolean \| AzuriteConfiguration` |false    |                       |
+
+**`AzuriteConfiguration`**
+
+|property  |type                                    |required |description            |
+|----------|----------------------------------------|---------|-----------------------|
+|blob      |`boolean \| AzuriteServiceConfiguration` |false    |                       |
+|queue     |`boolean \| AzuriteServiceConfiguration` |false    |                       |
+|table     |`boolean \| AzuriteServiceConfiguration` |false    |                       |
+
+**`AzuriteServiceConfiguration`**
+
+|property  |type                                    |required |description            |
+|----------|----------------------------------------|---------|-----------------------|
+|port      |`number`                                |false    |                       |
+|host      |`string`                                |false    |                       |
+|start     |`boolean`                               |false    |                       |
+
 
 Example:
 
 ```ts
 const configuration = {
   functions: ['./src/functions/*.ts'],
+  app: './src/app',
+  azurite: false
 }
 
 export default configuration
