@@ -58,10 +58,10 @@ export default configuration
 The class that will serve as a trigger collector has to stay in the configured path. So for this example we are going to create the class in the path `./src/functions`
 
 ```ts
-import { HttpTrigger } from '@bluish/core'
+import { Http } from '@bluish/core'
 
 class HelloWorld {
-  @HttpTrigger.Get('/hello-world')
+  @Http.Get('/hello-world')
   public say() {
     return 'Hello world!'
   }

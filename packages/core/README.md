@@ -54,10 +54,10 @@ The events are used to infiltrate the flow of the bluish runner.
 The initialization hook happens before actually entering your trigger, it helps you create custom validations and parsers.
 
 ```ts
-import { OnInitialize, HttpTrigger, HttpContext } from '@bluish/core'
+import { OnInitialize, Http, HttpContext } from '@bluish/core'
 
 export class Users {
-  @HttpTrigger.Get('/users')
+  @Http.Get('/users')
   @OnInitialize(async (context: HttpContext) => {
     if (!isAuthorizedToReadUser(context.headers.authorization))
       throw new UnauthorizedError()
@@ -73,12 +73,12 @@ see the [`OnInitialize` documentation](./docs/decorators/on-initialize.md).
 Com ele você pode se conectar ao fluxo de destruição do gatilho, útil para limpeza e fechamento de conexões.
 
 ```ts
-import { OnInitialize, HttpTrigger } from '@bluish/core'
+import { OnInitialize, Http } from '@bluish/core'
 
 @OnInitialize(async () => await connection.connect())
 @OnDestroy(async () => await connection.end())
 export class Users {
-  @HttpTrigger.Get('/users')
+  @Http.Get('/users')
   public async list() {}
 }
 ```
@@ -97,10 +97,10 @@ Also with the same polymorphism as `OnInitialize` and `OnDestroy`, on `OnError` 
     return { status: 400, body: { message: 'unauthorized' } }
 })
 export class Users {
-  @HttpTrigger.Post('/users')
+  @Http.Post('/users')
   public async create() {}
 
-  @HttpTrigger.Patch('/users')
+  @Http.Patch('/users')
   public async update() {}
 }
 ```
