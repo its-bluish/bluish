@@ -122,13 +122,9 @@ Bluish is a tool under development, so it's in its alpha stage, we already have 
 
   - [Blob](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-blob)
 
-  - [Event Grid](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid)
-
   - [Event Hub](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs)
 
   - [Queue storage](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue)
-
-  - [Timer](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer)
 
 - Bindings merge
 
