@@ -10,7 +10,7 @@
 ## Table of Contents
 
   - [Getting Started](#getting-started)
-    - [Install](#install)
+    - [Installation](#Installation)
     - [Configuration](#configuration)
     - [Coding](#coding)
     - [Execution](#Execution)
