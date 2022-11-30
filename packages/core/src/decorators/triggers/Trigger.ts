@@ -12,7 +12,7 @@ type TriggerConstructor<C extends Context> = new (
 
 export interface TriggerOptions<C extends Context> {
   name?: string
-  bindings?: Binding[]
+  bindings?: (Binding | null)[]
   TriggerConfiguration?: TriggerConstructor<C>
   Context: new (...args: any[]) => C
 }
@@ -32,6 +32,6 @@ export function Trigger<C extends Context>({
           propertyKey,
         ),
       )
-      .bindings.push(...bindings)
+      .bindings.push(...bindings.filter(<T>(binding: T): binding is Exclude<T, null> => !!binding))
   }
 }

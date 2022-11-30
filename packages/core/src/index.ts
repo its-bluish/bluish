@@ -27,3 +27,6 @@ export { waitForTriggerConfiguration } from './tools/waitForTriggerConfiguration
 
 export { Timer, TimerOptions } from './decorators/triggers/Timer'
 export { TimerContext, AzureFunctionTimerContext } from './models/contexts/TimerContext'
+
+export { EventGrid } from './decorators/triggers/EventGrid'
+export { EventGridContext, Event } from './models/contexts/EventGridContext'
