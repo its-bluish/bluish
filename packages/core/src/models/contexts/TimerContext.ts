@@ -36,7 +36,15 @@ export class TimerContext extends Context {
     return new Date(this.azureFuctionTimerContext.ScheduleStatus.Next)
   }
 
-  public success = () => void 0
-  public unhandledError = () => void 0
-  public handledError = () => void 0
+  public success() {
+    return void 0
+  }
+
+  public unhandledError() {
+    return void 0
+  }
+
+  public handledError() {
+    return void 0
+  }
 }

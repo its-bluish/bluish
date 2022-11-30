@@ -26,4 +26,4 @@ export { waitForSourceOrApplicationConfiguration } from './tools/waitForSourceOr
 export { waitForTriggerConfiguration } from './tools/waitForTriggerConfiguration'
 
 export { Timer, TimerOptions } from './decorators/triggers/Timer'
-export { TimerContext } from './models/contexts/TimerContext'
+export { TimerContext, AzureFunctionTimerContext } from './models/contexts/TimerContext'
