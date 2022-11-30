@@ -45,6 +45,30 @@ export class Users {
 
 For more details about the template see the [`Http` documentation](./docs/decorators/http.md)
 
+### Timer
+```ts
+import { Timer } from '@bluish/core'
+
+export class Class {
+  @Timer('0 */1 * * * *')
+  public timer() {
+    console.log('doing')
+  }
+}
+```
+
+### EventGrid
+```ts
+import { EventGrid } from '@bluish/core'
+
+export class Class {
+  @EventGrid()
+  public observer() {
+    console.log('event')
+  }
+}
+```
+
 ## Events
 
 The events are used to infiltrate the flow of the bluish runner.
