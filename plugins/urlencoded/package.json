@@ -1,6 +1,6 @@
 {
   "name": "@bluish/plugin-urlencoded",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "main": "dist/index.js",
   "license": "MIT",
   "files": [
@@ -23,7 +23,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@bluish/testing": "0.0.0-alpha.1",
+    "@bluish/testing": "^0.0.0-alpha.2",
     "qs": "^6.11.0",
     "type-is": "^1.6.18"
   },
