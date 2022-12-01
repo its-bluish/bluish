@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable object-shorthand */
 import { Command } from 'commander'
@@ -76,6 +77,9 @@ start.action(async () => {
   await fs.symlink(path.join(opts.input, 'node_modules'), path.join(output, 'node_modules'))
 
   await fs.symlink(path.join(opts.input, 'package.json'), path.join(output, 'package.json'))
+
+  if (await exists(path.join(opts.input, '.env')))
+    await fs.symlink(path.join(opts.input, '.env'), path.join(output, '.env'))
 
   const configuration = await getBluishConfiguration(opts.input, opts.config)
 
