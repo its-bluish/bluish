@@ -16,13 +16,18 @@ jobs:
         id: packages
         uses: actions/cache@v3
         with:
-          path: ./node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            ./node_modules
+            ./packages/*/dist
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/packages/{core,testing}/**/*.ts') }}
           restore-keys: ${{ runner.os }}-yarn-
       
       - name: install
         if: steps.packages.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile --non-interactive
+        run: |
+          yarn install --frozen-lockfile --non-interactive
+          yarn workspace @bluish/core build
+          yarn workspace @bluish/testing build
 
   lint:
     runs-on: ubuntu-latest
@@ -38,8 +43,10 @@ jobs:
         id: packages
         uses: actions/cache@v3
         with:
-          path: ./node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            ./node_modules
+            ./packages/*/dist
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/packages/{core,testing}/**/*.ts') }}
           restore-keys: ${{ runner.os }}-yarn-
 
       - name: jest
@@ -59,8 +66,10 @@ jobs:
         id: packages
         uses: actions/cache@v3
         with:
-          path: ./node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            ./node_modules
+            ./packages/*/dist
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/packages/{core,testing}/**/*.ts') }}
           restore-keys: ${{ runner.os }}-yarn-
 
       - name: jest
