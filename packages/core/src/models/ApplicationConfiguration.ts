@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 import { Host } from './Host'
 import { HookCollection } from './HookCollection'
 import { PluginCollection } from './PluginCollection'
@@ -28,11 +30,13 @@ export class ApplicationConfiguration {
     if (globalThis.bluishApplicationConfiguration?.target !== target) {
       const applicationConfiguration: ApplicationConfiguration = new this(target)
 
+      // @ts-ignore
       globalThis.bluishApplicationConfiguration = applicationConfiguration
 
       CoreEmitter.emit('application-configuration', applicationConfiguration)
     }
 
+    // @ts-ignore
     return globalThis.bluishApplicationConfiguration
   }
 
@@ -46,6 +50,7 @@ export class ApplicationConfiguration {
 }
 
 declare global {
+  // @ts-ignore
   // eslint-disable-next-line no-inner-declarations, vars-on-top, no-var
   var bluishApplicationConfiguration: ApplicationConfiguration | null
 }

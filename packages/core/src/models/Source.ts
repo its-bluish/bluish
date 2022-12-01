@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CoreEmitter } from '../helpers/CoreEmitter'
 import { getDecoratedFilePath } from '../tools/getDecoratedFilePath'
@@ -6,7 +8,8 @@ import { PluginCollection } from './PluginCollection'
 import { TriggerConfigurationCollection } from './TriggerConfigurationCollection'
 
 export class Source {
-  private static get _sources() {
+  private static get _sources(): Map<Function, Source> {
+    // @ts-ignore
     return (globalThis.bluishSources ??= new Map<Function, Source>())
   }
 
@@ -50,6 +53,7 @@ export class Source {
 }
 
 declare global {
+  // @ts-ignore
   // eslint-disable-next-line no-inner-declarations, vars-on-top, no-var
   var bluishSources: Map<Function, Source> | undefined
 }

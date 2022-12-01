@@ -4,9 +4,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { HttpContext } from '../../../models/contexts/HttpContext'
 import { Runner } from '../../../models/Runner'
-import { run } from '../../../test-utils/run'
 import { Bind } from '../../Bind'
 import { Http } from '../Http'
+import { run } from '@bluish/testing'
 
 describe('Http', () => {
   it.each([
@@ -28,11 +28,16 @@ describe('Http', () => {
       }
     }
 
-    await expect(
-      run.testing(Testing, void 0, {
-        headers: {},
-      }),
-    ).resolves.toMatchSnapshot()
+    const { response } = await run.http[method.toLowerCase() as Lowercase<typeof method>](
+      Testing,
+      'testing',
+    )
+
+    expect(response).toEqual({
+      status: 200,
+      headers: {},
+      body: method,
+    })
   })
 
   describe('.Query', () => {
@@ -42,14 +47,11 @@ describe('Http', () => {
         public testing(@Http.Query() query: unknown) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          query: { testing: true },
-          headers: {},
-        },
-      )
+
+      await run.http.get(Testing, 'testing', {
+        query: { testing: true },
+      })
+
       expect(testing).toBeCalledWith({ testing: true })
     })
 
@@ -59,14 +61,9 @@ describe('Http', () => {
         public testing(@Http.Query('testing') testing: boolean) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          query: { testing: true },
-          headers: {},
-        },
-      )
+      await run.http.get(Testing, 'testing', {
+        query: { testing: true },
+      })
       expect(testing).toBeCalledWith(true)
     })
 
@@ -76,14 +73,9 @@ describe('Http', () => {
         public testing(@Http.Query((query) => query.testing) testing: boolean) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          query: { testing: true },
-          headers: {},
-        },
-      )
+      await run.http.get(Testing, 'testing', {
+        query: { testing: true },
+      })
       expect(testing).toBeCalledWith(true)
     })
   })
@@ -95,14 +87,7 @@ describe('Http', () => {
         public testing(@Http.Body() body: unknown) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          body: { testing: true },
-          headers: {},
-        },
-      )
+      await run.http.get(Testing, 'testing', { body: { testing: true } })
       expect(testing).toBeCalledWith({ testing: true })
     })
 
@@ -112,14 +97,7 @@ describe('Http', () => {
         public testing(@Http.Body((body) => body === 'true') testing: boolean) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          body: 'true',
-          headers: {},
-        },
-      )
+      await run.http.get(Testing, 'testing', { body: 'true' })
       expect(testing).toBeCalledWith(true)
     })
   })
@@ -130,49 +108,35 @@ describe('Http', () => {
         @Http.Get('/')
         public testing(@Http.Param() query: unknown) {}
       }
+
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          params: { testing: true },
-          headers: {},
-        },
-      )
-      expect(testing).toBeCalledWith({ testing: true })
+
+      await run.http.get(Testing, 'testing', { params: { testing: 'true' } })
+
+      expect(testing).toBeCalledWith({ testing: 'true' })
     })
 
     it('appends to the first argument by selecting the value by name', async () => {
       class Testing {
         @Http.Get('/')
-        public testing(@Http.Param('testing') testing: boolean) {}
+        public testing(@Http.Param('testing') testing: 'true') {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          params: { testing: true },
-          headers: {},
-        },
-      )
-      expect(testing).toBeCalledWith(true)
+
+      await run.http.get(Testing, 'testing', { params: { testing: 'true' } })
+
+      expect(testing).toBeCalledWith('true')
     })
 
     it('appends to the first argument by selecting the value', async () => {
       class Testing {
         @Http.Get('/')
-        public testing(@Http.Param((query) => query.testing) testing: boolean) {}
+        public testing(@Http.Param((query) => query.testing === 'true') testing: boolean) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          params: { testing: true },
-          headers: {},
-        },
-      )
+
+      await run.http.get(Testing, 'testing', { params: { testing: 'true' } })
+
       expect(testing).toBeCalledWith(true)
     })
   })
@@ -184,15 +148,9 @@ describe('Http', () => {
         public testing(@Http.Header('Content-Type') contentType: string) {}
       }
       const testing = jest.spyOn(Testing.prototype, 'testing')
-      await run.testing(
-        Testing,
-        {},
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
+
+      await run.http.get(Testing, 'testing', { headers: { 'Content-Type': 'application/json' } })
+
       expect(testing).toBeCalledWith('application/json')
     })
 
@@ -202,7 +160,11 @@ describe('Http', () => {
         @Http.Header('Content-Type', 'application/json')
         public testing() {}
       }
-      await expect(run.testing(Testing, {}, { headers: {} })).resolves.toMatchSnapshot()
+      const { response } = await run.http.get(Testing, 'testing')
+
+      expect(response.headers).toEqual({
+        'Content-Type': 'application/json',
+      })
     })
   })
 
@@ -213,7 +175,10 @@ describe('Http', () => {
         @Http.Status(201)
         public testing() {}
       }
-      await expect(run.testing(Testing, {}, { headers: {} })).resolves.toMatchSnapshot()
+
+      const { response } = await run.http.post(Testing, 'testing', { headers: {} })
+
+      expect(response.status).toEqual(201)
     })
   })
 })

@@ -29,7 +29,7 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
   public params: HttpTemplate['params'] & T['params']
   public body: T['body']
   public rawBody: unknown
-  protected response: Response = {
+  private _response: Response = {
     headers: {},
   }
 
@@ -50,8 +50,8 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
     this.rawBody = azureFunctionRequest.rawBody
   }
 
-  public success(payload: unknown): PromiseToo<unknown> {
-    const { status, headers } = this.response
+  protected buildResponsePayload(payload: unknown) {
+    const { status, headers } = this._response
 
     if (!payload) return { status, headers, body: payload }
 
@@ -74,27 +74,35 @@ export class HttpContext<T extends Partial<HttpTemplate> = {}> extends Context {
     return { status, headers, body: payload }
   }
 
+  public success(payload: unknown): PromiseToo<unknown> {
+    this.azureFunctionContext.res = this.buildResponsePayload(payload)
+    if (!this.azureFunctionContext.res.status) this.azureFunctionContext.res.status = 200
+    return void 0
+  }
+
   public unhandledError(error: unknown): PromiseToo<unknown> {
     throw error
   }
 
   public handledError(payload: unknown): PromiseToo<unknown> {
-    return this.success(payload)
+    this.azureFunctionContext.res = this.buildResponsePayload(payload)
+    if (!this.azureFunctionContext.res.status) this.azureFunctionContext.res.status = 500
+    return void 0
   }
 
   public status(): number
   public status(status: number): this
   public status(status?: number) {
-    if (status === void 0) return this.response.status
+    if (status === void 0) return this._response.status
 
-    this.response.status = status
+    this._response.status = status
 
     return this
   }
 
   public setHeader(name: string, value: string): this
   public setHeader(name: string, value: string) {
-    this.response.headers[name] = value
+    this._response.headers[name] = value
 
     return this
   }

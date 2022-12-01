@@ -23,6 +23,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
+    "@bluish/testing": "0.0.0-alpha.1",
     "qs": "^6.11.0",
     "type-is": "^1.6.18"
   },

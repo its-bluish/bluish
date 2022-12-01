@@ -24,7 +24,7 @@ export function Http<C extends HttpContext>(
       methods: Array.isArray(methods) ? methods : [methods],
       dataType: type,
     }),
-    new Binding('http', '$return', 'out'),
+    new Binding('http', 'res', 'out'),
   ]
 
   return Trigger({ Context, bindings })

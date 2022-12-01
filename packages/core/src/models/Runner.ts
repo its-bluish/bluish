@@ -194,6 +194,10 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
       },
     )
 
+    return this.runWithContext(context)
+  }
+
+  public async runWithContext(context: Context) {
     try {
       await this._initialize(context)
 

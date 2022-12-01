@@ -21,7 +21,10 @@
       "rules": {
         "max-classes-per-file": ["off"],
         "max-lines-per-function": ["off"],
-        "@typescript-eslint/unbound-method": ["off"]
+        "@typescript-eslint/unbound-method": ["off"],
+        "@typescript-eslint/no-magic-numbers": ["off"],
+        "@typescript-eslint/no-empty-function": ["off"],
+        "@typescript-eslint/no-unsafe-argument": ["off"]
       }
     }
   ]

@@ -2,13 +2,13 @@ import { Context, HttpContext, Plugin } from '@bluish/core'
 import { is } from 'type-is'
 
 export interface BluishUrlencodedPluginOptions {
-  extended?: boolean
+  extended: boolean
 }
 
 export default class BluishUrlencodedPlugin extends Plugin {
   public readonly extended: boolean
 
-  constructor({ extended = false }: BluishUrlencodedPluginOptions) {
+  constructor({ extended }: BluishUrlencodedPluginOptions) {
     super()
     this.extended = extended
   }
@@ -33,8 +33,6 @@ export default class BluishUrlencodedPlugin extends Plugin {
     Object.assign(context, { query })
 
     if (typeof context.rawBody !== 'string') return void 0
-
-    if (!(context instanceof HttpContext)) return void 0
 
     if (BluishUrlencodedPlugin.isContentTypeFormUrlencoded(context as HttpContext)) {
       const body = parser.parse(context.rawBody)

@@ -1,0 +1,13 @@
+{
+  "name": "@bluish/testing",
+  "version": "0.0.0-alpha.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "prepublish": "yarn build"
+  },
+  "peerDependencies": {
+    "@bluish/core": "0.0.1-alpha.4"
+  }
+}

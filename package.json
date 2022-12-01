@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "yarn workspaces run build",
-    "test": "rimraf ./{packages,plugins}/**/dist && jest .",
+    "test": "jest .",
     "prepare": "husky install"
   },
   "devDependencies": {
