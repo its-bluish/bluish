@@ -104,6 +104,28 @@ This is the exact same binary that goes up in `azure-functions-core-tools` with 
 
 Ready, now you can start writing your triggers creating classes for better initialization and their methods.
 
+## Testing
+
+For testing the triggers you can use the official bluish library `@bluish/testing`.
+
+```ts
+import { Http } from '@bluish/core'
+import { run } from '@bluish/testing'
+
+class Users {
+  @Http.Get('/')
+  public list() {
+    // ...
+  }
+}
+
+it('get users list', () => {
+  const { response } = await run.http.get(Users, 'list', {})
+
+  expect(response.body).toHaveLength(20)
+})
+```
+
 ## Documentation
 
 Bluish is essentially made up of two packages, [`@bluish/core`](./packages/core) and [`@bluish/cli`](./packages/cli).
