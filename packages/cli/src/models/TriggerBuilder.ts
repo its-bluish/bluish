@@ -46,9 +46,9 @@ export class TriggerBuilder {
     await fs.writeFile(
       path.join(outDir, 'index.js'),
       `
+${application ? `const { default: Application } = require('${application}')` : ''}
 const { Runner } = require('${trigger.runner}')
 const { ${triggerExportName}: Trigger } = require('${path.relative(outDir, triggerPath)}')
-${application ? `const { default: Application } = require('${application}')` : ''}
 
 ${
   application
