@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.1-alpha.6](https://github.com/its-bluish/bluish/compare/@bluish/cli@0.0.1-alpha.5...@bluish/cli@0.0.1-alpha.6) (2022-12-08)
+
+
+### Bug Fixes
+
+* **cli:** wrong esm improve ([1133f1c](https://github.com/its-bluish/bluish/commit/1133f1cd5d9e313426087981882379931c3666c4))
+
+
+
+
+
 ## [0.0.1-alpha.5](https://github.com/its-bluish/bluish/compare/@bluish/cli@0.0.1-alpha.4...@bluish/cli@0.0.1-alpha.5) (2022-12-08)
 
 
