@@ -13,7 +13,7 @@ import { AzuriteServer } from '../models/AzuriteServer'
 import { getBluishConfiguration } from '../tools/getBluishConfiguration'
 import inquirer from 'inquirer'
 
-interface StartOptions {
+interface Options {
   config: string
   input: string
   port: number
@@ -21,6 +21,7 @@ interface StartOptions {
   app?: string
   azurite: boolean
   yes: boolean
+  verbose: boolean
 }
 
 export const start = new Command('start')
@@ -57,6 +58,7 @@ start.option(
   false,
 )
 start.option('-y, --yes', 'say yes to all questions', false)
+start.option('-v, --verbose', '', false)
 
 const localSettingsJson = {
   IsEncrypted: false,
@@ -66,7 +68,7 @@ const localSettingsJson = {
 }
 
 start.action(async () => {
-  const opts = start.opts<StartOptions>()
+  const opts = start.opts<Options>()
   const { yes } = opts
 
   if (!(await exists(DEFAULT_INSTALL_AZURE_FUNCTIONS_BINARIES_PATH)))

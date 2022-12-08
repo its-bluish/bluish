@@ -17,6 +17,7 @@ export interface DevServerOptions {
   port: number
   output: string
   configuration: IConfiguration
+  verbose: boolean
 }
 
 export class DevServer {
@@ -27,14 +28,14 @@ export class DevServer {
   public functionsWatcher: ChokidarWatcher
 
   constructor(public options: DevServerOptions) {
-    const { input, output, port } = this.options
+    const { input, output, port, verbose } = this.options
 
     const bluishConfiguration = this.options.configuration
 
     this.configuration = new Configuration({ input, output }, bluishConfiguration)
 
     this.azureServer = new AzureServer(
-      { port },
+      { port, verbose },
       {
         asleep: true,
         cwd: output,
