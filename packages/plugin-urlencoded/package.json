@@ -19,7 +19,7 @@
     "url": "https://github.com/its-bluish/bluish/tree/main/plugins/urlencoded"
   },
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "tsc -p tsconfig.build.json",
     "prepublish": "yarn build"
   },
   "dependencies": {

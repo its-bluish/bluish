@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "tsc -p tsconfig.build.json",
     "prepublish": "yarn build"
   },
   "peerDependencies": {
