@@ -7,6 +7,8 @@ export { On } from './decorators/On'
 export { Use } from './decorators/Use'
 export { Bind } from './decorators/Bind'
 
+export { SignalR } from './decorators/SignalR'
+
 export { Http, HttpOptions } from './decorators/triggers/Http'
 export { Trigger, TriggerOptions } from './decorators/triggers/Trigger'
 

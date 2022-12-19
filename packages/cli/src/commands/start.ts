@@ -103,6 +103,13 @@ start.action(async () => {
     localSettingsJson.Values.AzureWebJobsStorage = azuriteServer.toAzureWebJobsStorage()
   }
 
+  const applicationConfiguration = await devServer.getApplicationConfiguration()
+
+  Object.assign(
+    localSettingsJson.Values,
+    Object.fromEntries(applicationConfiguration.settings.entries()),
+  )
+
   await fs.writeFile(
     path.join(output, 'local.settings.json'),
     JSON.stringify(localSettingsJson, null, 2),

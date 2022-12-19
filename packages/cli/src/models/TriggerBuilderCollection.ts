@@ -23,8 +23,21 @@ export class TriggerBuilderCollection {
 
   constructor(protected builder: Builder, protected configuration: Configuration) {}
 
-  public add(trigger: TriggerConfiguration) {
-    const triggerBuilder = new TriggerBuilder(trigger, this.builder, this.configuration, this)
+  public add(
+    trigger: TriggerConfiguration,
+    TriggerBuilderConstructor: new (
+      triggerConfiguration: TriggerConfiguration,
+      builder: Builder,
+      configuration: Configuration,
+      collection: TriggerBuilderCollection,
+    ) => TriggerBuilder = TriggerBuilder,
+  ) {
+    const triggerBuilder = new TriggerBuilderConstructor(
+      trigger,
+      this.builder,
+      this.configuration,
+      this,
+    )
 
     this._triggerBuilders.push(triggerBuilder)
 

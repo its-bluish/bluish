@@ -46,6 +46,8 @@ export class ApplicationConfiguration {
 
   public host = new Host()
 
+  public settings = new Map<string, string | number | boolean | null>()
+
   protected constructor(public target: Function) {}
 }
 

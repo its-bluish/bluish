@@ -4,7 +4,10 @@ import * as Yup from 'yup'
 import BluishUrlencodedPlugin from '@bluish/plugin-urlencoded'
 import { isHttpError } from 'http-errors'
 
-@App({ http: { prefix: '' } })
+@App({
+  http: { prefix: '' },
+  signalr: 'Endpoint=https://testing-signal-r-2.service.signalr.net;AccessKey=h7xYJgp8GjJhuBZMEyHYitrOaj/dKQSS6xuKTUsm7pM=;Version=1.0;' 
+})
 @Use(new BluishUrlencodedPlugin({ extended: true }))
 class Application {
   @OnInitialize()
@@ -31,8 +34,6 @@ class Application {
       return { status: error.status, body: { message: error.message } }
 
     if (!(error instanceof Error)) return void 0
-
-    console.log(error)
 
     return { status: 500, body: { message: error.message } }
   }

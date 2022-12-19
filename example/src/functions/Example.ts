@@ -1,4 +1,5 @@
 import { Bind, Timer, TimerContext, EventGrid, EventGridContext } from "@bluish/core"
+import { SignalR } from '@bluish/core/dist/decorators/SignalROut'
 import http from 'http'
 
 export class Example {
@@ -12,7 +13,7 @@ export class Example {
     console.log("@EventGrid()", new Date(), context.payload)
   }
 
-  @Timer('*/5 * * * * *')
+  @Timer('0 * * * * *')
   public sendEventGrid() {
     const request = http.request('http://127.0.0.1:8080/runtime/webhooks/EventGrid?functionName=Example_eventGrid', {
       method: 'POST',
@@ -23,5 +24,11 @@ export class Example {
     request.write(JSON.stringify({}))
 
     request.end()
+  }
+
+  @Timer('0 * * * * *')
+  public signalR(@SignalR() send: SignalR) {
+    console.log("@Timer('0 * * * * *') @SignalR()")
+    send('message', new Date().toISOString())
   }
 }

@@ -179,8 +179,10 @@
   dependencies:
     regenerator-runtime "^0.13.10"
 
-"@bluish/cli@../packages/cli":
-  version "0.0.1-alpha.2"
+"@bluish/cli@^0.0.1-alpha.6":
+  version "0.0.1-alpha.6"
+  resolved "https://registry.yarnpkg.com/@bluish/cli/-/cli-0.0.1-alpha.6.tgz#66687dc9714696c7a5495249e8803f1a37f856b7"
+  integrity sha512-yoY1yeZxooKThsXsfb/iowEPPV+CvxTI3keAvITObdxI52crGB6sOx54dODkrM1ksJPkBEY2B6ojIz6GqtbJBA==
   dependencies:
     "@cookiex/emitter" "^1.0.5"
     chokidar "^3.5.3"
@@ -192,7 +194,7 @@
     unzipper "^0.10.11"
 
 "@bluish/core@../packages/core":
-  version "0.0.1-alpha.3"
+  version "0.0.1-alpha.5"
 
 "@bluish/eslint-config@^0.0.5":
   version "0.0.5"
@@ -205,11 +207,17 @@
     eslint-plugin-prettier "^4.2.1"
     prettier "^2.8.0"
 
-"@bluish/plugin-urlencoded@../plugins/urlencoded":
-  version "0.0.1-alpha.2"
+"@bluish/plugin-urlencoded@../packages/plugin-urlencoded":
+  version "0.0.1-alpha.3"
   dependencies:
+    "@bluish/testing" "^0.0.0-alpha.2"
     qs "^6.11.0"
     type-is "^1.6.18"
+
+"@bluish/testing@^0.0.0-alpha.2":
+  version "0.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@bluish/testing/-/testing-0.0.0-alpha.2.tgz#a72e6141064fe57b25cc40173256f19d6b0e29db"
+  integrity sha512-HWxjR4sGFtQXYX/BvHuo7FHS1eRu/Oa3LB1WESqojGCQIUjK5sx7jB8Ajic3DZ36hc0W7McnBe9pwJqJdHqZqA==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -3118,9 +3126,9 @@ run-parallel@^1.1.9:
     queue-microtask "^1.2.2"
 
 rxjs@^7.5.5:
-  version "7.5.7"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.7.tgz#2ec0d57fdc89ece220d2e702730ae8f1e49def39"
-  integrity sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.0.tgz#90a938862a82888ff4c7359811a595e14e1e09a4"
+  integrity sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==
   dependencies:
     tslib "^2.1.0"
 

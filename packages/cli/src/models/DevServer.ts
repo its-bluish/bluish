@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-confusing-void-expression */
 /* eslint-disable object-shorthand */
 /* eslint-disable max-lines-per-function */
-import { ApplicationConfiguration } from '@bluish/core'
+import { ApplicationConfiguration, Source } from '@bluish/core'
 import path from 'path'
 import { Configuration as IConfiguration } from '../interfaces/Configuration'
 import { TriggerBuilderCollection as TriggersBuilder } from './TriggerBuilderCollection'
@@ -11,6 +12,7 @@ import { Configuration } from './Configuration'
 import { _import } from '../tools/_import'
 import { ChokidarWatcher } from './ChokidarWatcher'
 import TypescriptBuilder from '../builders/typescript'
+import { ApplicationTriggerBuilder } from './ApplicationTriggerBuilder'
 
 export interface DevServerOptions {
   input: string
@@ -60,20 +62,25 @@ export class DevServer {
       })
   }
 
-  private async getApplicationConfiguration(bluishConfiguration: IConfiguration) {
+  private _applicationConfiguration: ApplicationConfiguration | null = null
+
+  public async getApplicationConfiguration() {
+    if (this._applicationConfiguration) return this._applicationConfiguration
+
     const { input } = this.options
 
-    return _import<Function>(
-      bluishConfiguration.application && path.join(input, bluishConfiguration.application),
+    this._applicationConfiguration = await _import<Function>(
+      this.options.configuration.application &&
+        path.join(input, this.options.configuration.application),
     ).then((app) => ApplicationConfiguration.set(app))
+
+    return this._applicationConfiguration!
   }
 
   public async start() {
     const { input, output } = this.options
 
-    const applicationConfiguration = await this.getApplicationConfiguration(
-      this.options.configuration,
-    )
+    const applicationConfiguration = await this.getApplicationConfiguration()
 
     await fs.writeFile(
       path.join(output, 'host.json'),
@@ -103,6 +110,14 @@ export class DevServer {
     this.functionsWatcher.on('unlink', async (filepath) => {
       await this.triggersBuilder.removeByFilePath(path.join(input, filepath))
     })
+
+    await Promise.all(
+      Source.get(applicationConfiguration.target)
+        ?.triggers.toArray()
+        .map(async (trigger) =>
+          this.triggersBuilder.add(trigger, ApplicationTriggerBuilder).build(),
+        ) ?? [],
+    )
 
     this.functionsWatcher.start()
 
