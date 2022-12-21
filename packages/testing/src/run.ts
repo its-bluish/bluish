@@ -11,12 +11,11 @@ import {
 import { MockedHttpContext } from './helpers/MockedHttpContext'
 import { MockedTimerContext } from './helpers/MockedTimerContext'
 
-export async function run<I, K extends keyof I & string, T extends run.Types>(
-  target: new () => I,
-  key: K,
-  type: T,
-  payload?: run.PayloadMap[T],
-): Promise<run.ContextMap[T]> {
+export async function run<
+  K extends keyof I & string,
+  I extends Record<K, (...args: any[]) => unknown>,
+  T extends run.Types,
+>(target: new () => I, key: K, type: T, payload?: run.PayloadMap[T]): Promise<run.ContextMap[T]> {
   const source = Source.getOrFail(target)
 
   const trigger = source.triggers.findOneByPropertyOrFail(key)
@@ -77,16 +76,15 @@ export namespace run {
     'event-grid': MockedEventGridContextPayload
   }
 
-  export async function http<I, K extends keyof I & string>(
-    target: new () => I,
-    key: K,
-    payload?: PayloadMap['http'],
-  ) {
+  export async function http<
+    K extends keyof I & string,
+    I extends Record<K, (...args: any[]) => unknown>,
+  >(target: new () => I, key: K, payload?: PayloadMap['http']) {
     return run(target, key, 'http', payload)
   }
 
   function httpFactoryByMethod(method: Lowercase<HttpMethod>) {
-    return async <I, K extends keyof I & string>(
+    return async <K extends keyof I & string, I extends Record<K, (...args: any[]) => unknown>>(
       target: new () => I,
       key: K,
       payload?: Omit<PayloadMap['http'], 'method'>,
@@ -106,11 +104,10 @@ export namespace run {
 
   http.delete = httpFactoryByMethod('delete')
 
-  export async function timer<I, K extends keyof I & string>(
-    target: new () => I,
-    key: K,
-    payload?: PayloadMap['timer'],
-  ) {
+  export async function timer<
+    K extends keyof I & string,
+    I extends Record<K, (...args: any[]) => unknown>,
+  >(target: new () => I, key: K, payload?: PayloadMap['timer']) {
     return run(target, key, 'timer', payload)
   }
 }
