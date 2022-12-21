@@ -55,4 +55,12 @@ export class HookCollection extends Collection<Hook> {
 
     return lastArgumentTransformation
   }
+
+  public async callByEventAsync(
+    event: string,
+    target: Record<string, unknown>,
+    ...args: unknown[]
+  ) {
+    return Promise.all(this.findByEvent(event).map((hook) => this.callHook(hook, target, ...args)))
+  }
 }

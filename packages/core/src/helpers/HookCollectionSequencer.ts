@@ -1,12 +1,26 @@
 /* eslint-disable no-await-in-loop */
 import { HookCollection } from '../models/HookCollection'
 
+const log = async (
+  event: string,
+  entries: [HookCollection, Record<string, unknown>][],
+  ...args: unknown[]
+) => {
+  await Promise.allSettled(
+    entries.map(async ([collection, target]) =>
+      collection.callByEventAsync(`log:${event}`, target, ...args),
+    ),
+  )
+}
+
 export namespace HookCollectionSequencer {
   export async function callByEvent(
     event: string,
     entries: [HookCollection, Record<string, unknown>][],
     ...args: unknown[]
   ) {
+    await log(event, entries, ...args)
+
     for (const [collection, target] of entries) {
       await collection.callByEvent(event, target, ...args)
     }
@@ -17,6 +31,8 @@ export namespace HookCollectionSequencer {
     entries: [HookCollection, Record<string, unknown>][],
     ...args: unknown[]
   ): Promise<unknown> {
+    await log(event, entries, ...args)
+
     for (const [collection, target] of entries) {
       const result = await collection.getFirstReturnByEvent(event, target, ...args)
 
@@ -32,6 +48,8 @@ export namespace HookCollectionSequencer {
     argumentTarget: unknown,
     ...args: unknown[]
   ) {
+    await log(event, entries, argumentTarget, ...args)
+
     let lastArgumentTransformation = argumentTarget
 
     for (const [collection, target] of entries) {
