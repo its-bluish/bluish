@@ -2,11 +2,12 @@ import fs from 'fs/promises'
 import path from 'path'
 import { exists } from '../tools/exists'
 import { TriggerBuilder } from './TriggerBuilder'
+import humps from 'humps'
 
 export class ApplicationTriggerBuilder extends TriggerBuilder {
   public override async build() {
     const { trigger, builder, configuration } = this
-    const dirName = `${trigger.name}_${trigger.property}`
+    const dirName = humps.pascalize(`${trigger.name}_${trigger.property}`)
 
     const outDir = path.join(configuration.output, dirName)
 

@@ -6,6 +6,7 @@ import { Builder } from './Builder'
 import { Configuration } from './Configuration'
 import { exists } from '../tools/exists'
 import { getTriggerExportName } from '../tools/getTriggerExportName'
+import humps from 'humps'
 
 export class TriggerBuilder {
   constructor(
@@ -15,13 +16,9 @@ export class TriggerBuilder {
     public collection: TriggerBuilderCollection,
   ) {}
 
-  public get hasTriggerWithSameName() {
-    return this.collection.hasTriggerWithSameName(this)
-  }
-
   public async remove() {
-    const { trigger, configuration, hasTriggerWithSameName } = this
-    const dirName = hasTriggerWithSameName ? `${trigger.name}_${trigger.property}` : trigger.name
+    const { trigger, configuration } = this
+    const dirName = humps.pascalize(`${trigger.name}_${trigger.property}`)
 
     const outDir = path.join(configuration.output, dirName)
 
@@ -29,8 +26,8 @@ export class TriggerBuilder {
   }
 
   public async build() {
-    const { trigger, builder, configuration, hasTriggerWithSameName } = this
-    const dirName = hasTriggerWithSameName ? `${trigger.name}_${trigger.property}` : trigger.name
+    const { trigger, builder, configuration } = this
+    const dirName = humps.pascalize(`${trigger.name}_${trigger.property}`)
 
     const outDir = path.join(configuration.output, dirName)
 
