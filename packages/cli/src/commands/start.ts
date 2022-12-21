@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable object-shorthand */
@@ -12,6 +13,7 @@ import { install } from './install'
 import { AzuriteServer } from '../models/AzuriteServer'
 import { getBluishConfiguration } from '../tools/getBluishConfiguration'
 import inquirer from 'inquirer'
+import { _import } from '../tools/_import'
 
 interface Options {
   config: string
@@ -22,6 +24,7 @@ interface Options {
   azurite: boolean
   yes: boolean
   verbose: boolean
+  require: string[]
 }
 
 export const start = new Command('start')
@@ -59,6 +62,12 @@ start.option(
 )
 start.option('-y, --yes', 'say yes to all questions', false)
 start.option('-v, --verbose', '', false)
+start.option(
+  '-r, --require <path or module>',
+  'module to preload',
+  (require, requires) => requires.concat(require),
+  [] as string[],
+)
 
 const localSettingsJson = {
   IsEncrypted: false,
@@ -70,6 +79,11 @@ const localSettingsJson = {
 start.action(async () => {
   const opts = start.opts<Options>()
   const { yes } = opts
+
+  for (const require of opts.require) {
+    if (require.startsWith('.')) await _import(path.resolve(opts.input, require))
+    else await _import(require)
+  }
 
   if (!(await exists(DEFAULT_INSTALL_AZURE_FUNCTIONS_BINARIES_PATH)))
     await install.parseAsync(process.argv.slice(0, 2))
