@@ -73,7 +73,7 @@ describe('Bluish Urlencoded Plugin', () => {
   it('parse the query as qs no extended', async () => {
     class Testing {
       @Http.Get('/testing')
-      @BluishUrlencoded({ extended: true })
+      @BluishUrlencoded({ extended: false })
       public testing() {}
     }
 

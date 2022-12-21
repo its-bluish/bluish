@@ -40,7 +40,7 @@ describe('run.http', () => {
     class Testing {
       @Http.Get('/tests/{testId}')
       @OnInitialize(
-        (context: HttpContext) => (context.params.testId = Number(context.params.testId)),
+        (context: HttpContext) => void (context.params.testId = Number(context.params.testId)),
       )
       public testing() {}
     }
