@@ -7,7 +7,8 @@ export function getDecoratedFilePath(constructor: Function) {
 
   const file = trace.stack.split(/\n/g).find((file) => file.includes('__decorate'))
 
-  if (!file && process.env.BLUISH_RUNNING_LOCAL_TESTS !== 'true') throw new Error('TODO')
+  if (!file && process.env.BLUISH_RUNNING_LOCAL_TESTS !== 'true')
+    throw new Error('Could not find decorated triggers source path')
 
   if (!file) return ''
 

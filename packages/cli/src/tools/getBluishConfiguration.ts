@@ -9,7 +9,8 @@ export async function getBluishConfiguration(dir: string, config?: string) {
   if (config) {
     const fullpath = path.resolve(dir, config)
 
-    if (!(await exists(fullpath))) throw new Error('TODO')
+    if (!(await exists(fullpath)))
+      throw new Error(`There is no bluish configuration file '${config}'`)
 
     return _import<Configuration>(fullpath)
   }

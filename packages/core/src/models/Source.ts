@@ -36,7 +36,12 @@ export class Source {
   public static getOrFail(target: Function | Object) {
     const source = this.get(target)
 
-    if (!source) throw new Error('TODO')
+    if (!source)
+      throw new Error(
+        `There is no instance of source by ${
+          typeof target === 'function' ? target.name : target.constructor.name
+        }`,
+      )
 
     return source
   }

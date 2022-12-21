@@ -3,8 +3,8 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
 
 /* eslint-disable no-param-reassign */
 export function deepAssign(target: unknown, source: unknown): unknown {
-  if (!isObject(target)) throw new Error('TODO')
-  if (!isObject(source)) throw new Error('TODO')
+  if (!isObject(target)) throw new Error('The target must be a non-null object')
+  if (!isObject(source)) throw new Error('The source must be a non-null object')
 
   Object.entries(source).forEach(([key, value]) => {
     if (key === 'prototype') return void 0

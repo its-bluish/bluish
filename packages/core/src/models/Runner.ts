@@ -20,7 +20,8 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
   ) {
     const application = Application ? new Application() : {}
 
-    if (typeof application !== 'object') throw new Error('TODO')
+    if (typeof application !== 'object')
+      throw new Error('The application instance must be an object')
 
     this.application = application as Record<string, unknown>
 
@@ -30,21 +31,24 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
 
     this.triggerConfiguration = this.source.triggers.findOneByPropertyOrFail(property)
 
-    const instance = new RootConstructor()
+    this.instance = new RootConstructor()
 
-    if (typeof instance !== 'object') throw new Error('TODO')
+    if (typeof this.instance !== 'object')
+      throw new Error(`The source instance ${this.RootConstructor.name} must be an object`)
 
-    if (!(this.property in instance)) throw new Error('TODO')
+    if (!(this.property in this.instance))
+      throw new Error(
+        `The source instance '${this.RootConstructor.name}' must contain the property defined as trigger '${this.property}'`,
+      )
 
-    this.instance = instance as Record<P, Fn> & Record<string, unknown>
+    if (typeof this.instance[this.property] !== 'function')
+      throw new Error(
+        `The trigger type defined in the source instance must be a function '${this.RootConstructor.name}${this.property}'`,
+      )
   }
 
   public async run(context: Context) {
     const args = await this.triggerConfiguration.args.toArguments(context)
-
-    if (!(this.property in this.instance)) throw new Error('TODO')
-
-    if (typeof this.instance[this.property] !== 'function') throw new Error('TODO')
 
     return this.instance[this.property](...args) as unknown
   }
@@ -52,7 +56,10 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
   private static _hook(target: Record<string, unknown>, hook: Hook, ...args: unknown[]): unknown {
     if (typeof hook.call === 'function') return hook.call(...args)
 
-    if (typeof target[hook.call] !== 'function') throw new Error('TODO')
+    if (typeof target[hook.call] !== 'function')
+      throw new Error(
+        `Cannot call hook as property does not exist in source or application '${target.constructor.name}.${hook.call}' '${hook.event}'`,
+      )
 
     return (target[hook.call] as Fn)(...args)
   }

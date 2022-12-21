@@ -45,7 +45,7 @@ export class ChokidarWatcher extends Emitter<ChokidarWatcherEvents> {
   }
 
   public async close() {
-    if (!this._watcher) throw new Error('TODO')
+    if (!this._watcher) throw new Error('There is no chokidar watcher instance to close')
 
     await this._watcher.close()
   }

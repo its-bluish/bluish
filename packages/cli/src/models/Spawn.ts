@@ -68,7 +68,10 @@ export class Spawn extends Emitter<SpawnEvents> implements PromiseLike<void> {
   }
 
   public toWakeUp() {
-    if (this.process) throw new Error('TODO')
+    if (this.process)
+      throw new Error(
+        'The process is or has already been executed, it is not possible to execute the same instance twice.',
+      )
 
     this.process = spawn(this.command, this.args, this.options)
 
@@ -87,7 +90,10 @@ export class Spawn extends Emitter<SpawnEvents> implements PromiseLike<void> {
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null | undefined,
   ): PromiseLike<TResult1 | TResult2> {
     return new Promise<void>((resolve, reject) => {
-      if (!this.process) throw new Error('TODO')
+      if (!this.process)
+        throw new Error(
+          'There is no process running or already terminated, before calling invoke thenable make sure to wake up the process',
+        )
 
       this.process.on('close', (signal) => {
         if (signal === 0) resolve()
@@ -101,7 +107,7 @@ export class Spawn extends Emitter<SpawnEvents> implements PromiseLike<void> {
 
   public async kill(signal?: number | NodeJS.Signals) {
     return new Promise<number | null>((resolve) => {
-      if (!this.process) throw new Error('TODO')
+      if (!this.process) throw new Error('There is no instance of the process to be killed.')
 
       this.process.on('exit', resolve)
 

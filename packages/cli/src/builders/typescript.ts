@@ -32,7 +32,11 @@ export default class TypescriptBuilder extends Builder {
   public static getTsConfig(tsConfigPath: string) {
     const { config, error } = ts.readConfigFile(tsConfigPath, ts.sys.readFile.bind(ts.sys))
 
-    if (error) throw new Error('TODO')
+    if (error) {
+      const message =
+        typeof error.messageText === 'string' ? error.messageText : error.messageText.messageText
+      throw new Error(message)
+    }
 
     return config as SemiTsConfig
   }
@@ -74,7 +78,7 @@ export default class TypescriptBuilder extends Builder {
   }
 
   public stopWatch() {
-    if (!this.program) throw new Error('TODO')
+    if (!this.program) throw new Error('There is no assisted program instance to stop')
 
     this.program.close()
   }

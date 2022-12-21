@@ -123,7 +123,10 @@ export class AzuriteServer {
   }
 
   public async start({ input, output, location }: AzuriteServerStartOptions) {
-    if (!this.hasAzurite(input) && !(await this.installAzurite(input))) throw new Error('TODO')
+    if (!this.hasAzurite(input) && !(await this.installAzurite(input)))
+      throw new Error(
+        'It is not possible to start the azurite service without having it as a dependency',
+      )
 
     await this._init('blob', output, location)
     await this._init('queue', output, location)

@@ -19,7 +19,10 @@ export class TriggerConfigurationCollection extends Collection<TriggerConfigurat
   public findOneByPropertyOrFail(property: string) {
     const trigger = this.array.find((trigger) => trigger.property === property)
 
-    if (!trigger) throw new Error('TODO')
+    if (!trigger)
+      throw new Error(
+        `Unable to find trigger by property '${property}' in '${this.source.target.name}' source`,
+      )
 
     return trigger
   }

@@ -11,7 +11,7 @@ export class ApplicationTriggerBuilder extends TriggerBuilder {
 
     const outDir = path.join(configuration.output, dirName)
 
-    if (!configuration.application) throw new Error('TODO')
+    if (!configuration.application) throw new Error('There is no path to the application')
 
     const application = path.relative(outDir, await builder.find(configuration.application))
 
