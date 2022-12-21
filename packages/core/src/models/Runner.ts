@@ -67,11 +67,15 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
   private async _initialize(context: Context) {
     await context.initialize?.()
 
-    await HookCollectionSequencer.callByEvent('initialize', [
-      [this.applicationConfiguration.hooks, this.application],
-      [this.source.hooks, this.instance],
-      [this.triggerConfiguration.hooks, {}],
-    ])
+    await HookCollectionSequencer.callByEvent(
+      'initialize',
+      [
+        [this.applicationConfiguration.hooks, this.application],
+        [this.source.hooks, this.instance],
+        [this.triggerConfiguration.hooks, {}],
+      ],
+      context,
+    )
   }
 
   private async _destroy(context: Context) {
