@@ -15,7 +15,7 @@ export async function run<I, K extends keyof I & string, T extends run.Types>(
   target: new () => I,
   key: K,
   type: T,
-  payload?: run.OptionsMap[T],
+  payload?: run.PayloadMap[T],
 ): Promise<run.ContextMap[T]> {
   const source = Source.getOrFail(target)
 
@@ -71,7 +71,7 @@ export namespace run {
     'event-grid': MockedEventGridContext
   }
 
-  export interface OptionsMap {
+  export interface PayloadMap {
     http: MockedAzureHttpRequestOptions
     timer: null
     'event-grid': MockedEventGridContextPayload
@@ -80,7 +80,7 @@ export namespace run {
   export async function http<I, K extends keyof I & string>(
     target: new () => I,
     key: K,
-    payload?: OptionsMap['http'],
+    payload?: PayloadMap['http'],
   ) {
     return run(target, key, 'http', payload)
   }
@@ -89,7 +89,7 @@ export namespace run {
     return async <I, K extends keyof I & string>(
       target: new () => I,
       key: K,
-      payload?: Omit<OptionsMap['http'], 'method'>,
+      payload?: Omit<PayloadMap['http'], 'method'>,
     ) => http(target, key, { ...payload, method })
   }
 
@@ -109,7 +109,7 @@ export namespace run {
   export async function timer<I, K extends keyof I & string>(
     target: new () => I,
     key: K,
-    payload?: OptionsMap['timer'],
+    payload?: PayloadMap['timer'],
   ) {
     return run(target, key, 'timer', payload)
   }
