@@ -34,10 +34,6 @@ export class Example {
   @ServiceBus('testing')
   public async serviceBus(@ServiceBus.Item() queueItem: unknown) {
     console.log({ queueItem })
-
-    // const random = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) ) + min
-
-    // await new Promise((resolve) => setTimeout(resolve, random(10000, 100000)))
   }
 
   @Timer('0 * * * * *')
