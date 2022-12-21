@@ -1,31 +1,26 @@
-import { Context, HttpContext, Plugin } from '@bluish/core'
+import { HttpContext, OnInitialize } from '@bluish/core'
 import { is } from 'type-is'
 
 export interface BluishUrlencodedPluginOptions {
-  extended: boolean
+  extended?: boolean
 }
 
-export default class BluishUrlencodedPlugin extends Plugin {
-  public readonly extended: boolean
+function isContentTypeFormUrlencoded(context: HttpContext): string | false {
+  return is(context.headers['content-type'], 'application/x-www-form-urlencoded')
+}
 
-  constructor({ extended }: BluishUrlencodedPluginOptions) {
-    super()
-    this.extended = extended
-  }
+async function getParser(
+  extended: boolean,
+): Promise<typeof import('qs') | typeof import('querystring')> {
+  if (extended) return import('qs')
+  return import('querystring')
+}
 
-  public static isContentTypeFormUrlencoded(context: HttpContext): string | false {
-    return is(context.headers['content-type'], 'application/x-www-form-urlencoded')
-  }
-
-  public async getParser(): Promise<typeof import('qs') | typeof import('querystring')> {
-    if (this.extended) return import('qs')
-    return import('querystring')
-  }
-
-  public override async onInitialize(context: Context): Promise<void> {
+export default function BluishUrlencoded({ extended = true }: BluishUrlencodedPluginOptions = {}) {
+  return OnInitialize(async (context): Promise<void> => {
     if (!(context instanceof HttpContext)) return void 0
 
-    const parser = await this.getParser()
+    const parser = await getParser(extended)
 
     const { search } = new URL(context.url)
     const query = parser.parse(search.replace(/^\?/, ''))
@@ -34,12 +29,12 @@ export default class BluishUrlencodedPlugin extends Plugin {
 
     if (typeof context.rawBody !== 'string') return void 0
 
-    if (BluishUrlencodedPlugin.isContentTypeFormUrlencoded(context as HttpContext)) {
+    if (isContentTypeFormUrlencoded(context as HttpContext)) {
       const body = parser.parse(context.rawBody)
 
       Object.assign(context, { body })
     }
 
     return void 0
-  }
+  })
 }

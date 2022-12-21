@@ -4,7 +4,6 @@
 import { CoreEmitter } from '../helpers/CoreEmitter'
 import { getDecoratedFilePath } from '../tools/getDecoratedFilePath'
 import { HookCollection } from './HookCollection'
-import { PluginCollection } from './PluginCollection'
 import { TriggerConfigurationCollection } from './TriggerConfigurationCollection'
 
 export class Source {
@@ -49,8 +48,6 @@ export class Source {
   public triggers = new TriggerConfigurationCollection(this)
 
   public hooks = new HookCollection()
-
-  public plugins = new PluginCollection()
 
   public classFilePath = getDecoratedFilePath(Source)
 

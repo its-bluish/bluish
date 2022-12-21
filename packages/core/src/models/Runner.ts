@@ -1,10 +1,10 @@
-/* eslint-disable no-await-in-loop */
 import { TriggerConfiguration } from './TriggerConfiguration'
 import { ApplicationConfiguration } from './ApplicationConfiguration'
 import { Hook } from './Hook'
 import { AzureFunctionContext, Context } from './contexts/Context'
 import { Source } from './Source'
 import { Fn } from '../typings/helpers'
+import { HookCollectionSequencer } from '../helpers/HookCollectionSequencer'
 
 export class Runner<P extends string, T extends Record<P, Fn>> {
   public instance!: Record<P, Fn> & Record<string, unknown>
@@ -67,130 +67,51 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
   private async _initialize(context: Context) {
     await context.initialize?.()
 
-    for (const plugin of this.applicationConfiguration.plugins) await plugin.onInitialize?.(context)
-
-    for (const hook of this.applicationConfiguration.hooks.findByEvent('initialize'))
-      await this.constructor._hook(this.application, hook, context)
-
-    for (const plugin of this.source.plugins) await plugin.onInitialize?.(context)
-
-    for (const hook of this.source.hooks.findByEvent('initialize'))
-      await this.constructor._hook(this.instance, hook, context)
-
-    for (const plugin of this.triggerConfiguration.plugins) await plugin.onInitialize?.(context)
-
-    for (const hook of this.triggerConfiguration.hooks.findByEvent('initialize'))
-      await this.constructor._hook({}, hook, context)
+    await HookCollectionSequencer.callByEvent('initialize', [
+      [this.applicationConfiguration.hooks, this.application],
+      [this.source.hooks, this.instance],
+      [this.triggerConfiguration.hooks, {}],
+    ])
   }
 
   private async _destroy(context: Context) {
-    for (const hook of this.triggerConfiguration.hooks.findByEvent('destroy'))
-      await this.constructor._hook({}, hook, context)
-
-    for (const plugin of this.triggerConfiguration.plugins) await plugin.onDestroy?.(context)
-
-    for (const hook of this.source.hooks.findByEvent('destroy'))
-      await this.constructor._hook(this.instance, hook, context)
-
-    for (const plugin of this.source.plugins) await plugin.onDestroy?.(context)
-
-    for (const hook of this.applicationConfiguration.hooks.findByEvent('destroy'))
-      await this.constructor._hook(this.application, hook, context)
-
-    for (const plugin of this.applicationConfiguration.plugins) await plugin.onDestroy?.(context)
+    await HookCollectionSequencer.callByEvent(
+      'destroy',
+      [
+        [this.triggerConfiguration.hooks, {}],
+        [this.source.hooks, this.instance],
+        [this.applicationConfiguration.hooks, this.application],
+      ],
+      context,
+    )
 
     await context.destroy?.()
   }
 
   private async _error(error: unknown, context: Context) {
-    for (const hook of this.triggerConfiguration.hooks.findByEvent('error')) {
-      const data = await this.constructor._hook({}, hook, error, context)
-
-      if (data !== void 0) return data
-    }
-
-    for (const plugin of this.triggerConfiguration.plugins) {
-      const data = await plugin.onError?.(error, context)
-
-      if (data !== void 0) return data
-    }
-
-    for (const hook of this.source.hooks.findByEvent('error')) {
-      const data = await this.constructor._hook(this.instance, hook, error, context)
-
-      if (data !== void 0) return data
-    }
-
-    for (const plugin of this.source.plugins) {
-      const data = await plugin.onError?.(error, context)
-
-      if (data !== void 0) return data
-    }
-
-    for (const hook of this.applicationConfiguration.hooks.findByEvent('error')) {
-      const data = await this.constructor._hook(this.application, hook, error, context)
-
-      if (data !== void 0) return data
-    }
-
-    for (const plugin of this.applicationConfiguration.plugins) {
-      const data = await plugin.onError?.(error, context)
-
-      if (data !== void 0) return data
-    }
-
-    return null
+    return HookCollectionSequencer.getFirstReturnByEvent(
+      'error',
+      [
+        [this.triggerConfiguration.hooks, {}],
+        [this.source.hooks, this.instance],
+        [this.applicationConfiguration.hooks, this.application],
+      ],
+      error,
+      context,
+    )
   }
 
   private async _success(initialData: unknown, context: Context) {
-    let data: unknown = initialData
-
-    data = await this.triggerConfiguration.hooks
-      .findByEvent('success')
-      .reduce(
-        async (current, hook) =>
-          (await this.constructor._hook({}, hook, await current, context)) ?? current,
-        Promise.resolve(data),
-      )
-
-    data = await this.triggerConfiguration.plugins
-      .toArray()
-      .reduce(
-        async (current, plugin) => (await plugin.onSuccess?.(await current, context)) ?? current,
-        Promise.resolve(data),
-      )
-
-    data = await this.source.hooks
-      .findByEvent('success')
-      .reduce(
-        async (current, hook) =>
-          (await this.constructor._hook(this.instance, hook, await current, context)) ?? current,
-        Promise.resolve(data),
-      )
-
-    data = await this.source.plugins
-      .toArray()
-      .reduce(
-        async (current, plugin) => (await plugin.onSuccess?.(await current, context)) ?? current,
-        Promise.resolve(data),
-      )
-
-    data = await this.applicationConfiguration.hooks
-      .findByEvent('success')
-      .reduce(
-        async (current, hook) =>
-          (await this.constructor._hook(this.application, hook, await current, context)) ?? current,
-        Promise.resolve(data),
-      )
-
-    data = await this.applicationConfiguration.plugins
-      .toArray()
-      .reduce(
-        async (current, plugin) => (await plugin.onSuccess?.(await current, context)) ?? current,
-        Promise.resolve(data),
-      )
-
-    return data
+    return HookCollectionSequencer.reduceArgumentByEvent(
+      'success',
+      [
+        [this.triggerConfiguration.hooks, {}],
+        [this.source.hooks, this.instance],
+        [this.applicationConfiguration.hooks, this.application],
+      ],
+      initialData,
+      context,
+    )
   }
 
   private async _run(azureFunctionContext: AzureFunctionContext, ...args: unknown[]) {
@@ -216,7 +137,7 @@ export class Runner<P extends string, T extends Record<P, Fn>> {
     } catch (error) {
       const maybeHandleErrorPayload = await this._error(error, context)
 
-      if (maybeHandleErrorPayload !== null) {
+      if (maybeHandleErrorPayload !== null && maybeHandleErrorPayload !== void 0) {
         const response = await context.handledError(maybeHandleErrorPayload)
 
         return response

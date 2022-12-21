@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 import { Host } from './Host'
 import { HookCollection } from './HookCollection'
-import { PluginCollection } from './PluginCollection'
 import { CoreEmitter } from '../helpers/CoreEmitter'
 
 global.bluishApplicationConfiguration = null
@@ -41,8 +40,6 @@ export class ApplicationConfiguration {
   }
 
   public hooks = new HookCollection()
-
-  public plugins = new PluginCollection()
 
   public host = new Host()
 
