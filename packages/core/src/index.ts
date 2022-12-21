@@ -9,6 +9,8 @@ export { Bind } from './decorators/Bind'
 
 export { SignalR } from './decorators/SignalR'
 
+export { ServiceBus } from './decorators/triggers/ServiceBus'
+
 export { Http, HttpOptions } from './decorators/triggers/Http'
 export { Trigger, TriggerOptions } from './decorators/triggers/Trigger'
 
@@ -32,3 +34,5 @@ export { TimerContext, AzureFunctionTimerContext } from './models/contexts/Timer
 
 export { EventGrid } from './decorators/triggers/EventGrid'
 export { EventGridContext, Event } from './models/contexts/EventGridContext'
+
+export { ServiceBusContext } from './models/contexts/ServiceBusContext'

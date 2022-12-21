@@ -7,13 +7,15 @@ export interface AppOptions {
   http?: {
     prefix?: string
   }
-  signalr?: string
+  signalR?: string
+  serviceBus?: string
   host?: IHost
 }
 
 export function App({
   host,
-  signalr,
+  signalR,
+  serviceBus,
   http: { prefix: httpPrefix } = {},
 }: AppOptions = {}): ApplicationDecorator {
   return (target) => {
@@ -22,9 +24,14 @@ export function App({
     applicationConfiguration.host.set({ extensions: { http: { routePrefix: httpPrefix } } })
     applicationConfiguration.host.set(host)
 
-    if (signalr) {
-      applicationConfiguration.settings.set('AzureSignalRConnectionString', signalr)
+    if (signalR) {
+      applicationConfiguration.settings.set('AzureSignalRConnectionString', signalR)
       buildSignalRNegotiateTrigger(target)
+    }
+
+    if (serviceBus) {
+      applicationConfiguration.host.set({ extensions: { serviceBus: { batchOptions: {} } } })
+      applicationConfiguration.settings.set('AzureServiceBusConnectionString', serviceBus)
     }
   }
 }

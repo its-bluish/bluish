@@ -6,7 +6,8 @@ import { isHttpError } from 'http-errors'
 
 @App({
   http: { prefix: '' },
-  signalr: 'Endpoint=https://testing-signal-r-2.service.signalr.net;AccessKey=h7xYJgp8GjJhuBZMEyHYitrOaj/dKQSS6xuKTUsm7pM=;Version=1.0;' 
+  signalR: process.env.AZURE_SIGNALR_CONNECTION_STRING,
+  serviceBus: process.env.AZURE_SERVICE_BUS_CONNECTION_STRING
 })
 @Use(new BluishUrlencodedPlugin({ extended: true }))
 class Application {

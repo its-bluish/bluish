@@ -1,4 +1,5 @@
 import { IHost } from '../interfaces/IHost'
+import { deepAssign } from '../tools/deepAssign'
 
 export class Host {
   public extensionBundle: IHost.ExtensionBundle = {
@@ -33,7 +34,7 @@ export class Host {
     watchFiles,
   }: IHost = {}) {
     if (aggregator !== void 0) this.aggregator = aggregator
-    if (extensions !== void 0) this.extensions = extensions
+    if (extensions !== void 0) deepAssign((this.extensions ??= {}), extensions)
     if (functionTimeout !== void 0) this.functionTimeout = functionTimeout
     if (functions !== void 0) this.functions = functions
     if (healthMonitor !== void 0) this.healthMonitor = healthMonitor

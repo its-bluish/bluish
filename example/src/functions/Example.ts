@@ -1,7 +1,6 @@
-import { Bind, Timer, TimerContext, EventGrid, EventGridContext } from "@bluish/core"
-import { SignalR } from '@bluish/core/dist/decorators/SignalROut'
+import { Bind, Timer, TimerContext, EventGrid, EventGridContext, SignalR, ServiceBus } from "@bluish/core"
 import http from 'http'
-
+import crypto from 'crypto'
 export class Example {
   @Timer('0 */1 * * * *')
   public async timer(@Bind() context: TimerContext) {
@@ -30,5 +29,26 @@ export class Example {
   public signalR(@SignalR() send: SignalR) {
     console.log("@Timer('0 * * * * *') @SignalR()")
     send('message', new Date().toISOString())
+  }
+
+  @ServiceBus('testing')
+  public async serviceBus(@ServiceBus.Item() queueItem: unknown) {
+    console.log({ queueItem })
+
+    // const random = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) ) + min
+
+    // await new Promise((resolve) => setTimeout(resolve, random(10000, 100000)))
+  }
+
+  @Timer('0 * * * * *')
+  public async serviceBusTimerQueue(@ServiceBus('testing') enqueue: ServiceBus<Record<string, unknown>>) {
+    const random = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) ) + min
+
+    enqueue(
+      ...Array(random(100, 500)).fill(null).map(() => ({
+        ticketId: crypto.randomBytes(16).toString('hex'),
+        automationFlowBlockId: crypto.randomBytes(16).toString('hex'),
+      }))
+    )
   }
 }

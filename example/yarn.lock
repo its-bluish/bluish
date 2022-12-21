@@ -179,10 +179,8 @@
   dependencies:
     regenerator-runtime "^0.13.10"
 
-"@bluish/cli@^0.0.1-alpha.6":
+"@bluish/cli@../packages/cli":
   version "0.0.1-alpha.6"
-  resolved "https://registry.yarnpkg.com/@bluish/cli/-/cli-0.0.1-alpha.6.tgz#66687dc9714696c7a5495249e8803f1a37f856b7"
-  integrity sha512-yoY1yeZxooKThsXsfb/iowEPPV+CvxTI3keAvITObdxI52crGB6sOx54dODkrM1ksJPkBEY2B6ojIz6GqtbJBA==
   dependencies:
     "@cookiex/emitter" "^1.0.5"
     chokidar "^3.5.3"
@@ -195,6 +193,8 @@
 
 "@bluish/core@../packages/core":
   version "0.0.1-alpha.5"
+  dependencies:
+    humps "^2.0.1"
 
 "@bluish/eslint-config@^0.0.5":
   version "0.0.5"
@@ -1944,6 +1944,11 @@ https-proxy-agent@^5.0.0:
     agent-base "6"
     debug "4"
 
+humps@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/humps/-/humps-2.0.1.tgz#dd02ea6081bd0568dc5d073184463957ba9ef9aa"
+  integrity sha512-E0eIbrFWUhwfXJmsbdjRQFQPrl5pTEoKlz163j1mTqqUnU9PgR4AgB8AIITzuB3vLBdxZXyZ9TDIrwB2OASz4g==
+
 iconv-lite@0.4.24, iconv-lite@^0.4.24:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
@@ -2482,9 +2487,9 @@ minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
     brace-expansion "^1.1.7"
 
 minimatch@^5.0.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.1.tgz#6c9dffcf9927ff2a31e74b5af11adf8b9604b022"
-  integrity sha512-362NP+zlprccbEt/SkxKfRMHnNY85V74mVnpUpNyr3F35covl09Kec7/sEFLt3RA4oXmewtoaanoIf67SE5Y5g==
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.2.tgz#0939d7d6f0898acbd1508abe534d1929368a8fff"
+  integrity sha512-bNH9mmM9qsJ2X4r2Nat1B//1dJVcn3+iBLa3IgqJ7EbGaDNepL9QSHOxN4ng33s52VMMhhIfgCYDk3C4ZmlDAg==
   dependencies:
     brace-expansion "^2.0.1"
 

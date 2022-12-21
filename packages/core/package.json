@@ -23,6 +23,10 @@
   },
   "devDependencies": {
     "@azure/functions": "^3.2.0",
-    "@bluish/testing": "^0.0.0-alpha.2"
+    "@bluish/testing": "^0.0.0-alpha.2",
+    "@types/humps": "^2.0.2"
+  },
+  "dependencies": {
+    "humps": "^2.0.1"
   }
 }
