@@ -7,6 +7,8 @@ import { TriggerBuilderCollection } from '../models/TriggerBuilderCollection'
 import { glob } from '../tools/glob'
 import { _import } from '../tools/_import'
 import { getBluishConfiguration } from '../tools/getBluishConfiguration'
+import { Source } from '@bluish/core'
+import { ApplicationTriggerBuilder } from '../models/ApplicationTriggerBuilder'
 
 interface BuildOptions {
   config: string
@@ -65,6 +67,16 @@ build.action(async () => {
   )
 
   const triggersBuilder = new TriggerBuilderCollection(builder, configuration)
+
+  const application = await configuration.getApplication()
+
+  if (application)
+    await Promise.all(
+      Source.get(application)
+        ?.triggers.toArray()
+        .map(async (trigger) => triggersBuilder.add(trigger, ApplicationTriggerBuilder).build()) ??
+        [],
+    )
 
   await Promise.all(
     modules.map(async (module) => triggersBuilder.addByModuleExportAndBuild(module)),
