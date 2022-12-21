@@ -43,6 +43,8 @@ build.action(async () => {
 
   if (opts.functions.length) bluishConfiguration.functions = opts.functions
 
+  opts.output = path.resolve(opts.input, opts.output)
+
   const configuration = new Configuration(opts, bluishConfiguration)
 
   if (await exists(configuration.output))
