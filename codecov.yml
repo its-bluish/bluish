@@ -21,4 +21,4 @@ github_checks:
   annotations: true
 
 ignore:
-  - "packages/*/test-utils"
+  - "packages/.*/test-utils"
