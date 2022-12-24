@@ -5,6 +5,7 @@
     <img src="https://img.shields.io/npm/v/@bluish/core?style=for-the-badge">
   </a>
   <img src="https://img.shields.io/github/actions/workflow/status/its-bluish/bluish/ci.yml?branch=main&label=CI&style=for-the-badge">
+  <img src="https://img.shields.io/codecov/c/gh/its-bluish/bluish?style=for-the-badge">
 </p>
 
 ## Table of Contents

@@ -26,8 +26,7 @@ const configuration: Config.InitialOptions = {
     '/dist/',
     '/*.d.ts',
   ],
-  coverageReporters: ['lcovonly', 'text'],
-  // collectCoverageFrom: ['**/src/**/*.ts'],
+  coverageReporters: ['lcovonly', ['text', { skipFull: true }]],
   coverageThreshold: {
     global: {},
   },
