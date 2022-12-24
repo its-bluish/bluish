@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.0.0-alpha.3](https://github.com/its-bluish/bluish/compare/@bluish/testing@0.0.0-alpha.2...@bluish/testing@0.0.0-alpha.3) (2022-12-24)
+
+
+### Bug Fixes
+
+* **core:** pass context to initialize hooks ([f2e166c](https://github.com/its-bluish/bluish/commit/f2e166c66b2ebd154a784903f7f617238e17141a))
+
+
+
+
+
 # 0.0.0-alpha.2 (2022-12-01)
 
 

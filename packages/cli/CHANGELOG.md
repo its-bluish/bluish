@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.1-alpha.7](https://github.com/its-bluish/bluish/compare/@bluish/cli@0.0.1-alpha.6...@bluish/cli@0.0.1-alpha.7) (2022-12-24)
+
+
+### Bug Fixes
+
+* **cli:** fix output trigger inside build command ([effcd91](https://github.com/its-bluish/bluish/commit/effcd914bd53a1b4b40cf4957eccf8af80623cc8))
+
+
+### Features
+
+* add SignalR support ([872a8d0](https://github.com/its-bluish/bluish/commit/872a8d0ec37d3487975b0917416d7c88d155c3dd))
+* **cli:** add registers support to start command ([55f4950](https://github.com/its-bluish/bluish/commit/55f4950775076887c2e2eb6ffd91f37c808de153))
+* **cli:** add support to application source triggers inside build command ([454cc6e](https://github.com/its-bluish/bluish/commit/454cc6e9aecf06e66243112756afbe4e3fbc20ea))
+* **core,cli:** implement error description ([72716d5](https://github.com/its-bluish/bluish/commit/72716d548bffcc3ed48760ff2b687802b86ad1cb))
+* use pascalize join between source class name and property ([e736abb](https://github.com/its-bluish/bluish/commit/e736abbd204c9787b7f886167e1929da49bfbe37))
+
+
+
+
+
 ## [0.0.1-alpha.6](https://github.com/its-bluish/bluish/compare/@bluish/cli@0.0.1-alpha.5...@bluish/cli@0.0.1-alpha.6) (2022-12-08)
 
 

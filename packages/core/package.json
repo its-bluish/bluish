@@ -1,6 +1,6 @@
 {
   "name": "@bluish/core",
-  "version": "0.0.1-alpha.5",
+  "version": "0.0.1-alpha.6",
   "main": "dist/index.js",
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@azure/functions": "^3.2.0",
-    "@bluish/testing": "^0.0.0-alpha.2",
+    "@bluish/testing": "^0.0.0-alpha.3",
     "@types/humps": "^2.0.2"
   },
   "dependencies": {

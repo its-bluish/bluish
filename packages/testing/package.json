@@ -1,6 +1,6 @@
 {
   "name": "@bluish/testing",
-  "version": "0.0.0-alpha.2",
+  "version": "0.0.0-alpha.3",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
