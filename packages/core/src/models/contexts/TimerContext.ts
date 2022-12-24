@@ -9,7 +9,7 @@ export interface AzureFunctionTimerContext {
     LastUpdated: string
     Next: string
   }
-  IsPastDue: false
+  IsPastDue: boolean
 }
 
 export class TimerContext extends Context {
@@ -40,8 +40,8 @@ export class TimerContext extends Context {
     return void 0
   }
 
-  public unhandledError() {
-    return void 0
+  public unhandledError(error: unknown) {
+    throw error
   }
 
   public handledError() {

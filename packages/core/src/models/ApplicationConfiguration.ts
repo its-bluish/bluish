@@ -7,14 +7,6 @@ import { CoreEmitter } from '../helpers/CoreEmitter'
 global.bluishApplicationConfiguration = null
 
 export class ApplicationConfiguration {
-  public static has() {
-    return !!globalThis.bluishApplicationConfiguration
-  }
-
-  public static get() {
-    return globalThis.bluishApplicationConfiguration ?? null
-  }
-
   public static isSame(target: Function | Object) {
     const constructor = typeof target === 'function' ? target : target.constructor
 

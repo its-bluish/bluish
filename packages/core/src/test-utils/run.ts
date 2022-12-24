@@ -6,9 +6,9 @@ import { Fn } from '../typings/helpers'
 export async function run<P extends string, T extends Record<P, Fn>>(
   runner: Runner<P, T>,
   context: Partial<AzureFunctionContext> = {},
-  arg: unknown = {},
+  ...args: unknown[]
 ) {
-  return runner.toAzureFunction()(context as AzureFunctionContext, arg)
+  return runner.toAzureFunction()(context as AzureFunctionContext, ...args)
 }
 
 run.http = async <P extends string, T extends Record<P, Fn>>(
