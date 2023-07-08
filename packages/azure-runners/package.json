@@ -1,0 +1,26 @@
+{
+  "name": "@bluish/azure-runners",
+  "version": "0.0.0",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "rimraf": "^5.0.1"
+  },
+  "devDependencies": {
+    "@azure/functions": "^3.5.1",
+    "@bluish/core": "0.0.0",
+    "@bluish/cron": "0.0.0",
+    "@bluish/http": "0.0.0",
+    "@types/node": "^18.15.11"
+  },
+  "peerDependencies": {
+    "@bluish/core": "0.0.0"
+  }
+}

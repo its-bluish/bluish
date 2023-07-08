@@ -1,0 +1,38 @@
+{
+  "name": "@bluish/cli",
+  "version": "0.0.0",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "bluish": "dist/bin/index.js"
+  },
+  "scripts": {
+    "build": "npx tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "asynchronous-cascade-array": "^0.0.9",
+    "chokidar": "^3.5.3",
+    "commander": "^10.0.1",
+    "get-root-path": "^2.0.2",
+    "ink": "^4.3.0",
+    "ink-figlet-2": "^0.0.4",
+    "ink-gradient": "^3.0.0",
+    "ink-progress-bar-pacman": "^0.0.3",
+    "react": "^18.2.0",
+    "ts-asynchronous-event-emitter": "^0.0.1"
+  },
+  "devDependencies": {
+    "@bluish/core": "0.0.0",
+    "@types/ink-gradient": "^2.0.1",
+    "@types/node": "^18.15.11",
+    "@types/react": "^18.2.14"
+  },
+  "peerDependencies": {
+    "@bluish/core": "0.0.0"
+  }
+}

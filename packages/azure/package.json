@@ -1,0 +1,21 @@
+{
+  "name": "@bluish/azure",
+  "version": "0.0.0",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@bluish/azure-drivers": "0.0.0",
+    "@bluish/azure-runners": "0.0.0",
+    "@bluish/azure-server": "0.0.0"
+  },
+  "devDependencies": {
+    "@bluish/cli": "0.0.0"
+  }
+}

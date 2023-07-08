@@ -1,0 +1,33 @@
+{
+  "name": "bluish-example-01",
+  "license": "MIT",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json -w",
+    "rebuild": "cd ../.. && yarn workspaces foreach -vp run build && cd examples/01",
+    "start": "TZ=UTC yarn bluish start -f 'src/controllers/*' -p @bluish/azure -a 'src/app/index.ts'"
+  },
+  "devDependencies": {
+    "@bluish/azure": "0.0.0",
+    "@bluish/cli": "0.0.0",
+    "@types/http-errors": "^2.0.1",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^18.15.11",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@bluish/core": "0.0.0",
+    "@bluish/cron": "0.0.0",
+    "@bluish/http": "0.0.0",
+    "@bluish/typeorm": "0.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "sql.js": "^1.8.0",
+    "typeorm": "^0.3.17"
+  }
+}

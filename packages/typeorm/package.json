@@ -1,0 +1,19 @@
+{
+  "name": "@bluish/typeorm",
+  "version": "0.0.0",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "typeorm": "^0.3.17"
+  },
+  "devDependencies": {
+    "typeorm": "^0.3.17"
+  }
+}
